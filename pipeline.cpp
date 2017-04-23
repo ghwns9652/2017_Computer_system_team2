@@ -12,6 +12,7 @@ int s = 100;
 char *I_mem = (char *)malloc(s);
 char *data_mem = (char *)malloc(s);
 
+//각 단계 매개 레지스터
 string IF_ID_Res[7];
 string ID_EX_Res[7];
 string EX_MEM_Res[7];
