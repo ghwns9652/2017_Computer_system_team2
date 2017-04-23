@@ -91,7 +91,7 @@ void IF(unsigned int PC)
 	IF_ID().instr = instruction;
 }
 
-void ID(int* IF_ID)
+void ID(struct STAGE_REG* IF_ID)
 {
 	//case 별로 처리
 	if (IF_ID_Res[0].substr(0, 5) == "000000" && IF_ID_Res[0].substr(0, 5) == "000000")
@@ -103,7 +103,7 @@ void ID(int* IF_ID)
 }
 	
 
-void EX(int* ID_EX)
+void EX(struct STAGE_REG* ID_EX)
 {
 	
 	//case 별로 처리
@@ -120,7 +120,7 @@ void EX(int* ID_EX)
 	}
 }
 
-void MEM(int* EX_MEM)
+void MEM(struct STAGE_REG* EX_MEM)
 {
 	//load/store 예외처리
 
@@ -129,7 +129,7 @@ void MEM(int* EX_MEM)
 	}
 }
 
-void WB(int* MEM_WB)
+void WB(struct STAGE_REG* MEM_WB)
 {
 	//write_mem으로 레지스터에 데이터 입력
 }
