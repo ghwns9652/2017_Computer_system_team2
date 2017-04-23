@@ -67,16 +67,16 @@ string print_bin(unsigned int num, int len) {
 	return result;
 }
 
-void IF(unsigned int PC)
+struct STAGE_RES IF(unsigned int PC)
 {
-
+	struct STAGE_RES IF_ID;
 	// 메모리에서 명렁어 읽어오기
 	string instruction;
-	string instruction = print_bin(I_mem[PC],32);
-	
+	string instruction = print_bin(I_mem[PC], 32);
+
 
 	PC = PC + 4;
-	IF_ID().PC = PC;
+	IF_ID.PC = PC;
 
 	//	type_checker(atoi(instruction.substr(0, 5).c_str()));
 
@@ -88,7 +88,8 @@ void IF(unsigned int PC)
 	//IF_ID_Res[3] = atoi(bin.substr(16, 20).c_str());
 	//IF_ID_Res[4] = atoi(bin.substr(21, 25).c_str());
 	//IF_ID_Res[5] = atoi(bin.substr(26, 31).c_str());
-	IF_ID().instr = instruction;
+	IF_ID.instr = instruction;
+	return IF_ID;
 }
 
 void ID(STAGE_REG IF_ID)
@@ -133,7 +134,6 @@ void WB(STAGE_REG MEM_WB)
 {
 	//write_mem으로 레지스터에 데이터 입력
 }
-
 void main()
 {
 	struct STAGE_RES IF_ID;
@@ -146,6 +146,6 @@ void main()
 		MEM(EX_MEM);
 		EX(ID_EX);
 		ID(IF_ID);
-		IF(PC);
+		IF_ID=IF(PC);
 	}
 }
