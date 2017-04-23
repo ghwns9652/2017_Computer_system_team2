@@ -135,10 +135,10 @@ void main()
 	STAGE_RES MEM_WB;
 	while (true)
 	{
-		WB(MEM_WB_Res);
-		MEM(EX_MEM_Res);
-		EX(ID_EX_Res);
-		ID(IF_ID_Res);
+		WB(MEM_WB);
+		MEM(EX_MEM);
+		EX(ID_EX);
+		ID(IF_ID);
 		IF(PC);
 	}
 }
