@@ -6,6 +6,7 @@
 using namespace std;
 
 //hello
+//nohello
 unsigned int PC;
 int s = 100;
 char *I_mem = (char *)malloc(s);
