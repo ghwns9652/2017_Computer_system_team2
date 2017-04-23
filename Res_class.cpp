@@ -12,4 +12,7 @@ struct STAGE_RES
   int mem_rd;
   int sign_ex;
   int ALUSrc;
+  int branch;
+  int jump;
+  int Regdst;
 };
