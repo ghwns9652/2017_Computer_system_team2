@@ -87,7 +87,7 @@ void IF(unsigned int PC)
 	IF_ID_Res[0] = instruction;
 }
 
-void ID(int* IF_ID_Res)
+void ID(int* IF_ID)
 {
 	//case 별로 처리
 	if (IF_ID_Res[0].substr(0, 5) == "000000" && IF_ID_Res[0].substr(0, 5) == "000000")
@@ -99,10 +99,13 @@ void ID(int* IF_ID_Res)
 }
 	
 
-void EX(int* ID_EX_Res)
+void EX(int* ID_EX)
 {
+	
 	//case 별로 처리
-	string type = "
+	
+	string type;
+	
 	if (ID_EX_Res[0].substr(0, 5) == "000000" && ID_EX_Res[0].substr(0, 5) == "000000")
 	{
 		ID_EX_Res[3] = ID_EX_Res[2] + ID_EX_Res[1];
@@ -113,7 +116,7 @@ void EX(int* ID_EX_Res)
 	}
 }
 
-void MEM(int* EX_MEM_Res)
+void MEM(int* EX_MEM)
 {
 	//load/store 예외처리
 
@@ -122,7 +125,7 @@ void MEM(int* EX_MEM_Res)
 	}
 }
 
-void WB(int* MEM_WB_Res)
+void WB(int* MEM_WB)
 {
 	//write_mem으로 레지스터에 데이터 입력
 }
