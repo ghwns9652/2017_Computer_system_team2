@@ -23,12 +23,19 @@ string sample = "00000000000000000000000000000000";
 
 struct STAGE_RES
 {
+  string instr;
+  int NPC;
   int opcode;
-  int rs;
-  int rt;
-  int rd;
+  int REG1;
+  int REG2;
+  int REG3;
   int shift;
   int funct;
+  int IMM;
+  int ALU_OUT;
+  int BR_TARGET;
+  int MEM_OUT;
+  //control
   int reg_wt;
   int PC;
   int mem_wt;
