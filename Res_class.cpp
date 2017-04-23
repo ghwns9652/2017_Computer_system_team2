@@ -1,4 +1,4 @@
-class IF_ID_RES
+struct STAGE_RES
 {
 public:
 
