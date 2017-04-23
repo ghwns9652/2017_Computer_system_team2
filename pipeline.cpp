@@ -136,10 +136,10 @@ void WB(int* MEM_WB)
 
 void main()
 {
-	STAGE_RES IF_ID;
-	STAGE_RES ID_EX;
-	STAGE_RES EX_MEM;
-	STAGE_RES MEM_WB;
+	struct STAGE_RES IF_ID;
+	struct STAGE_RES ID_EX;
+	struct STAGE_RES EX_MEM;
+	struct STAGE_RES MEM_WB;
 	while (true)
 	{
 		WB(MEM_WB);
