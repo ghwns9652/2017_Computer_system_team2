@@ -69,12 +69,16 @@ string print_bin(unsigned int num, int len) {
 
 void IF(unsigned int PC)
 {
-	PC = PC + 4;
+
 	// 메모리에서 명렁어 읽어오기
-	//string instruction = I_mem[PC];
-	string instruction; 
+	string instruction;
+	string instruction = print_bin(I_mem[PC],32);
 	
-	type_checker(atoi(instruction.substr(0,5).c_str()));
+
+	PC = PC + 4;
+	IF_ID().PC = PC;
+
+	//	type_checker(atoi(instruction.substr(0, 5).c_str()));
 
 	////타입에 따라 담는 내용을 변경해줄 필요?
 	//// IF/ID Res에 담기
@@ -84,7 +88,7 @@ void IF(unsigned int PC)
 	//IF_ID_Res[3] = atoi(bin.substr(16, 20).c_str());
 	//IF_ID_Res[4] = atoi(bin.substr(21, 25).c_str());
 	//IF_ID_Res[5] = atoi(bin.substr(26, 31).c_str());
-	IF_ID_Res[0] = instruction;
+	IF_ID().instr = instruction;
 }
 
 void ID(int* IF_ID)
