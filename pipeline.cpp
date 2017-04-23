@@ -33,6 +33,7 @@ struct STAGE_RES
   int ALU_OUT;
   int BR_TARGET;
   int MEM_OUT;
+	int wt_data
   //control
   int reg_wt;
   int PC;
@@ -134,7 +135,9 @@ void MEM(STAGE_REG EX_MEM)
 
 void WB(STAGE_REG MEM_WB)
 {
-	//write_mem으로 레지스터에 데이터 입력
+	if (MEM_WB.mem_wt == 1) {
+		Reg(MEM_WB.rd) == MEM_WB.wt_data;
+	}
 }
 void main()
 {
