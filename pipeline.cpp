@@ -43,6 +43,8 @@ struct STAGE_RES
   int branch;
   int jump;
   int Regdst;
+  int DATA1;
+  int DATA2;
 };
 
 //addu 명령어 실행해보기
