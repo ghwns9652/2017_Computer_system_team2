@@ -5,8 +5,6 @@
 #include <map>
 using namespace std;
 
-//hello
-//nohello
 unsigned int PC;
 int s = 100;
 char *I_mem = (char *)malloc(s);
@@ -104,6 +102,7 @@ void ID(int* IF_ID_Res)
 void EX(int* ID_EX_Res)
 {
 	//case 별로 처리
+	string type = "
 	if (ID_EX_Res[0].substr(0, 5) == "000000" && ID_EX_Res[0].substr(0, 5) == "000000")
 	{
 		ID_EX_Res[3] = ID_EX_Res[2] + ID_EX_Res[1];
@@ -130,6 +129,10 @@ void WB(int* MEM_WB_Res)
 
 void main()
 {
+	STAGE_RES IF_ID;
+	STAGE_RES ID_EX;
+	STAGE_RES EX_MEM;
+	STAGE_RES MEM_WB;
 	while (true)
 	{
 		WB(MEM_WB_Res);
