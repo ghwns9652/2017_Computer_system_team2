@@ -13,10 +13,10 @@ char *I_mem = (char *)malloc(s);
 char *data_mem = (char *)malloc(s);
 
 //각 단계 매개 레지스터
-string IF_ID_Res[7];
-string ID_EX_Res[7];
-string EX_MEM_Res[7];
-string MEM_WB_Res[7];
+int IF_ID_Res[20];
+int ID_EX_Res[20];
+int EX_MEM_Res[20];
+int MEM_WB_Res[20];
 
 string sample = "00000000000000000000000000000000";
 
@@ -62,7 +62,7 @@ void IF(unsigned int PC)
 	IF_ID_Res[0] = instruction;
 }
 
-void ID(string* IF_ID_Res)
+void ID(int* IF_ID_Res)
 {
 	//case 별로 처리
 	if (IF_ID_Res[0].substr(0, 5) == "000000" && IF_ID_Res[0].substr(0, 5) == "000000")
@@ -74,7 +74,7 @@ void ID(string* IF_ID_Res)
 }
 	
 
-void EX(string* ID_EX_Res)
+void EX(int* ID_EX_Res)
 {
 	//case 별로 처리
 	if (ID_EX_Res[0].substr(0, 5) == "000000" && ID_EX_Res[0].substr(0, 5) == "000000")
@@ -87,7 +87,7 @@ void EX(string* ID_EX_Res)
 	}
 }
 
-void MEM(string* EX_MEM_Res)
+void MEM(int* EX_MEM_Res)
 {
 	//load/store 예외처리
 
@@ -96,7 +96,7 @@ void MEM(string* EX_MEM_Res)
 	}
 }
 
-void WB(string* MEM_WB_Res)
+void WB(int* MEM_WB_Res)
 {
 	//write_mem으로 레지스터에 데이터 입력
 }
