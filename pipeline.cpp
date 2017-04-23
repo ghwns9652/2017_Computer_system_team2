@@ -33,7 +33,7 @@ struct STAGE_RES
   int ALU_OUT;
   int BR_TARGET;
   int MEM_OUT;
-	int wt_data
+  int wt_data
   //control
   int reg_wt;
   int PC;
