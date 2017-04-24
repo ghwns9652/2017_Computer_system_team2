@@ -57,7 +57,7 @@ struct STAGE_RES IF(unsigned int PC)
 	struct STAGE_RES IF_ID;
 	// 메모리에서 명렁어 읽어오기
 	string instruction;
-	string instruction = read_mem(mem[PC]); // take instruction from memory
+	instruction = read_mem(mem[PC]); // take instruction from memory
 	
 	PC = PC + 4;
 	IF_ID.PC = PC; //Save PC value to IF_ID_Register
@@ -88,53 +88,91 @@ void EX(STAGE_RES ID_EX)
 	{
 		ID_EX.ALU_OUT = (~(ID_EX.DATA1 | ID_EX.DATA2));
 	}
+	struct STAGE_RES IF_ID;
+	// 메모리에서 명렁어 읽어오기
+	string instruction;
+	instruction = read_mem(mem[PC]); // take instruction from memory
+
+	PC = PC + 4;
+	IF_ID.PC = PC; //Save PC value to IF_ID_Register
+	IF_ID.instr = instruction; //Save PC value to IF_ID_Register
+
+	return IF_ID;
+}
+
+void ID(STAGE_RES IF_ID)
+{
+}
+
+
+struct STAGE_RES EX(STAGE_RES ID_EX)
+{
+	////
+	struct STAGE_RES result;
+	///////// R type
+	if (ID_EX.funct == 0x21) //ADDU (2)
+	{
+		result.ALU_OUT = ID_EX.DATA1 + ID_EX.DATA2;
+	}
+	else if (ID_EX.funct == 0x24) //AND (3)
+	{
+		result.ALU_OUT = ID_EX.DATA1 & ID_EX.DATA2;
+	}
+	else if (ID_EX.funct == 0x27) //12 nor
+	{
+		result.ALU_OUT = (~(ID_EX.DATA1 | ID_EX.DATA2));
+	}
 	else if (ID_EX.funct == 0x25) //13 or
 	{
-		ID_EX.ALU_OUT = (ID_EX.DATA1 | ID_EX.DATA2);
+		result.ALU_OUT = (ID_EX.DATA1 | ID_EX.DATA2);
 	}
 	else if (ID_EX.funct == 0x2b) //16 sltu
 	{
-		ID_EX.ALU_OUT = (ID_EX.DATA1 < ID_EX.DATA2 ? 1 : 0);
+		result.ALU_OUT = (ID_EX.DATA1 < ID_EX.DATA2 ? 1 : 0);
 	}
 	else if (ID_EX.funct == 0) //17 sll
 	{
-		ID_EX.ALU_OUT = res[rt] << ID_EX.shift;
+		result.ALU_OUT = res[rt] << ID_EX.shift;
 	}
 	else if (ID_EX.funct == 2) //18 srl
 	{
-		ID_EX.ALU_OUT = res[rt] >> ID_EX.shift;
+		result.ALU_OUT = res[rt] >> ID_EX.shift;
 	}
 	else if (ID_EX.funct == 0x23) //20 subu
 	{
-		ID_EX.ALU_OUT = ID_EX.DATA1 - ID_EX.DATA2;
+		result.ALU_OUT = ID_EX.DATA1 - ID_EX.DATA2;
 	}
 
 	//////// I type
 	if (ID_EX.opcode == 9) //ADDIU (1)
 	{
-		ID_EX.ALU_OUT = ID_EX.DATA1 + ID_EX.IMM;
+		result.ALU_OUT = ID_EX.DATA1 + ID_EX.IMM;
 	}
 	else if (ID_EX.opcode == 0xc) //ANDI (4)
 	{
-		ID_EX.ALU_OUT = ID_EX.DATA1 & ID_EX.IMM;
+		result.ALU_OUT = ID_EX.DATA1 & ID_EX.IMM;
 	}
 	else if (ID_EX.opcode == 0xf) //LUI (10)
 	{
-		ID_EX.ALU_OUT = ID_EX.IMM << 16;
+		result.ALU_OUT = ID_EX.IMM << 16;
 	}
 	else if (ID_EX.opcode == 0xd) //14 ori
 	{
-		ID_EX.ALU_OUT = (ID_EX.DATA1 | ID_EX.IMM);
+		result.ALU_OUT = (ID_EX.DATA1 | ID_EX.IMM);
 	}
 	else if (ID_EX.opcode == 0xb) //15 sltiu
 	{
 		if (ID_EX.DATA1 < ID_EX.IMM) {
-			ID_EX.ALU_OUT = 1;
+			result.ALU_OUT = 1;
 		}
 		else {
-			ID_EX.ALU_OUT = 0;
+			result.ALU_OUT = 0;
 		}
 	}
+
+	// result에 전달해서 리턴
+
+	return result;
 }
 
 void MEM(STAGE_RES EX_MEM)
