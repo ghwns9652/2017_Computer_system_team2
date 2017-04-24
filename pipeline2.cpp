@@ -68,11 +68,11 @@ struct STAGE_RES IF(unsigned int PC)
 	return IF_ID;
 }
 
-void ID(STAGE_RES* IF_ID)
+void ID(STAGE_RES IF_ID)
 {
 	STAGE_RES result;
 
-	string ins = IF_ID->instr;
+	string ins = IF_ID.instr;
 	int opcode = convert210(ins.substr(0, 6));
 	int ins_type = type_checker(opcode);
 	//for J code 
@@ -122,7 +122,6 @@ void ID(STAGE_RES* IF_ID)
 
 
 }
-
 
 
 struct STAGE_RES EX(STAGE_RES ID_EX)
