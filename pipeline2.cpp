@@ -107,6 +107,19 @@ void ID(STAGE_RES* IF_ID)
 			
 		}
 	}
+
+	if (ins_type == 2) { //R
+		result.REG3 = convert210(ins.substr(16, 5));
+		result.shift = convert210(ins.substr(21, 5));
+		result.funct = convert210(ins.substr(26, 6));
+		int funct = result.funct;
+
+		result.reg_wt = 1; //need confirm. -- right
+
+		//if(funct == )
+	}
+
+
 }
 
 
