@@ -9,20 +9,10 @@
 using namespace std;
 ////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////
-
 unsigned int PC;
 int s = 100;
 char *I_mem = (char *)malloc(s);
 char *data_mem = (char *)malloc(s);
-
-//각 단계 매개 레지스터
-int IF_ID_Res[20];
-int ID_EX_Res[20];
-int EX_MEM_Res[20];
-int MEM_WB_Res[20];
-
-string sample = "00000000000000000000000000000000";
-
 
 struct STAGE_RES
 {
@@ -52,28 +42,6 @@ struct STAGE_RES
   int DATA1;
   int DATA2;
 };
-
-//addu 명령어 실행해보기
-
-int type_checker(int op)
-{
-	if (op == 0) //R type
-		return 2;
-	else if ((op == 2) || (op == 3)) //J type
-		return 1;
-	else    // I type
-		return 0;
-}
-
-string print_bin(unsigned int num, int len) {
-	int length = len - 1;
-	string result;
-	for (length; length >= 0; --length)
-	{
-		result.append(to_string((num >> length) & 1));
-	}
-	return result;
-}
 
 struct STAGE_RES IF(unsigned int PC)
 {
