@@ -58,22 +58,11 @@ struct STAGE_RES IF(unsigned int PC)
 	// 메모리에서 명렁어 읽어오기
 	string instruction;
 	string instruction = print_bin(mem[PC], 32); //convert instruction integer into binary string
-
-
+	
 	PC = PC + 4;
 	IF_ID.PC = PC; //Save PC value to IF_ID_Register
-
-				   //	type_checker(atoi(instruction.substr(0, 5).c_str()));
-
-				   ////타입에 따라 담는 내용을 변경해줄 필요?
-				   //// IF/ID Res에 담기
-				   //IF_ID_Res[0] = atoi(bin.substr(0, 5).c_str());
-				   //IF_ID_Res[1] = atoi(bin.substr(6, 10).c_str());
-				   //IF_ID_Res[2] = atoi(bin.substr(11, 15).c_str());
-				   //IF_ID_Res[3] = atoi(bin.substr(16, 20).c_str());
-				   //IF_ID_Res[4] = atoi(bin.substr(21, 25).c_str());
-				   //IF_ID_Res[5] = atoi(bin.substr(26, 31).c_str());
 	IF_ID.instr = instruction; //Save PC value to IF_ID_Register
+	
 	return IF_ID;
 }
 
