@@ -43,7 +43,7 @@ struct STAGE_RES IF(unsigned int PC)
 	struct STAGE_RES IF_ID;
 	// 메모리에서 명렁어 읽어오기
 	string instruction;
-	string instruction = print_bin(I_mem[PC], 32); //convert instruction integer into binary string
+	string instruction = print_bin(mem[PC], 32); //convert instruction integer into binary string
 
 
 	PC = PC + 4;
@@ -63,7 +63,7 @@ struct STAGE_RES IF(unsigned int PC)
 	return IF_ID;
 }
 
-void ID(STAGE_REG IF_ID)
+void ID(STAGE_RES IF_ID)
 {
 	//case 별로 처리
 	if (IF_ID_Res[0].substr(0, 5) == "000000" && IF_ID_Res[0].substr(0, 5) == "000000")
@@ -75,7 +75,7 @@ void ID(STAGE_REG IF_ID)
 }
 
 
-void EX(STAGE_REG ID_EX)
+void EX(STAGE_RES ID_EX)
 {
 
 	//case 별로 처리
@@ -92,7 +92,7 @@ void EX(STAGE_REG ID_EX)
 	}
 }
 
-void MEM(STAGE_REG EX_MEM)
+void MEM(STAGE_RES EX_MEM)
 {
 	//load/store 예외처리
 
@@ -101,7 +101,7 @@ void MEM(STAGE_REG EX_MEM)
 	}
 }
 
-void WB(STAGE_REG MEM_WB)
+void WB(STAGE_RES MEM_WB)
 {
 	if (MEM_WB.mem_wt == 1) {
 		Reg(MEM_WB.rd) == MEM_WB.wt_data;
