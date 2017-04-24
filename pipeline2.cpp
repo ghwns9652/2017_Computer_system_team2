@@ -806,9 +806,9 @@ int main(int argc, char *argv[], char *envp[]) {
 	while (true)
 	{
 		WB(MEM_WB);
-		MEM(EX_MEM);
-		EX(ID_EX);
-		ID(IF_ID);
+		MEM_WB = MEM(EX_MEM);
+		EX_MEM = EX(ID_EX);
+		ID_EX = ID(IF_ID);
 		IF_ID = IF(PC);
 	}
 
