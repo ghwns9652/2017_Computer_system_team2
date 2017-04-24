@@ -79,85 +79,61 @@ void EX(STAGE_RES ID_EX)
 	if (ID_EX.funct == 0x21) //ADDU (2)
 	{
 		ID_EX.ALU_OUT = ID_EX.DATA1 + ID_EX.DATA2;
-		res[ID_EX.rd] = ID_EX.ALU_OUT;
 	}
 	else if (ID_EX.funct == 0x24) //AND (3)
 	{
-		res[rd] = res[rs] & res[rt];
+		ID_EX.ALU_OUT = ID_EX.DATA1 & ID_EX.DATA2;
 	}
 	else if (ID_EX.funct == 0x27) //12 nor
 	{
-		res[rd] = (~(res[rs] | res[rt]));
+		ID_EX.ALU_OUT = (~(ID_EX.DATA1 | ID_EX.DATA2));
 	}
 	else if (ID_EX.funct == 0x25) //13 or
 	{
-		res[rd] = (res[rs] | res[rt]);
+		ID_EX.ALU_OUT = (ID_EX.DATA1 | ID_EX.DATA2);
 	}
 	else if (ID_EX.funct == 0x2b) //16 sltu
 	{
-		res[rd] = (res[rs] < res[rt] ? 1 : 0);
+		ID_EX.ALU_OUT = (ID_EX.DATA1 < ID_EX.DATA2 ? 1 : 0);
 	}
 	else if (ID_EX.funct == 0) //17 sll
 	{
-		res[rd] = res[rt] << shamt;
+		ID_EX.ALU_OUT = res[rt] << ID_EX.shift;
 	}
 	else if (ID_EX.funct == 2) //18 srl
 	{
-		res[rd] = res[rt] >> shamt;
+		ID_EX.ALU_OUT = res[rt] >> ID_EX.shift;
 	}
 	else if (ID_EX.funct == 0x23) //20 subu
 	{
-		res[rd] = res[rs] - res[rt];
+		ID_EX.ALU_OUT = ID_EX.DATA1 - ID_EX.DATA2;
 	}
 
 	//////// I type
 	if (ID_EX.opcode == 9) //ADDIU (1)
 	{
-		res[rt] = res[rs] + imm;
+		ID_EX.ALU_OUT = ID_EX.DATA1 + ID_EX.IMM;
 	}
 	else if (ID_EX.opcode == 0xc) //ANDI (4)
 	{
-		res[rt] = res[rs] & imm;
-	}
-	else if (ID_EX.opcode == 4) //BEQ (5)
-	{
-		if (res[rs] == res[rt])
-		{
-			PC = PC + 4 * (imm);
-		}
-	}
-	else if (ID_EX.opcode == 5) //BNE (6)
-	{
-		if (res[rs] != res[rt])
-		{
-			PC = PC + 4 * (imm);
-		}
+		ID_EX.ALU_OUT = ID_EX.DATA1 & ID_EX.IMM;
 	}
 	else if (ID_EX.opcode == 0xf) //LUI (10)
 	{
-		res[rt] = imm << 16;
+		ID_EX.ALU_OUT = ID_EX.IMM << 16;
 	}
-	else if (ID_EX.opcode == 0x23) //11 lw
-	{
-		res[rt] = read_mem(res[rs] + imm);
-	}
-	
 	else if (ID_EX.opcode == 0xd) //14 ori
 	{
-		res[rt] = (res[rs] | imm);
+		ID_EX.ALU_OUT = (ID_EX.DATA1 | ID_EX.IMM);
 	}
 	else if (ID_EX.opcode == 0xb) //15 sltiu
 	{
-		if (res[rs] < imm) {
-			res[rt] = 1;
+		if (ID_EX.DATA1 < ID_EX.IMM) {
+			ID_EX.ALU_OUT = 1;
 		}
 		else {
-			res[rt] = 0;
+			ID_EX.ALU_OUT = 0;
 		}
-	}
-	else if (ID_EX.opcode == 0x2b) //19 sw
-	{
-		write_mem(res[rs] + imm, res[rt]);
 	}
 }
 
