@@ -9,7 +9,7 @@
 ////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////
 //global variables
-int res[32];
+int reg[32];
 size_t s = sizeof(char) * 4 * 1024 * 1024 * 1024;
 unsigned char *mem = (unsigned char *)malloc(s);
 unsigned int PC;
@@ -22,7 +22,7 @@ int text_size = 0;
 using namespace std;
 ////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////
-struct STAGE_RES
+struct STAGE_REG
 {
 	string instr;
 	int NPC;
@@ -38,7 +38,7 @@ struct STAGE_RES
 	int BR_TARGET;
 	int MEM_OUT;
 	int wt_data;
-	int res_data;
+	int reg_data;
 	//control
 	int reg_wt;
 	int PC;
@@ -54,9 +54,9 @@ struct STAGE_RES
 	int DATA2;
 };
 
-struct STAGE_RES IF(unsigned int PC)
+struct STAGE_REG IF(unsigned int PC)
 {
-	struct STAGE_RES IF_ID;
+	struct STAGE_REG IF_ID;
 	// 메모리에서 명렁어 읽어오기
 	string instruction;
 	instruction = read_mem(mem[PC]); // take instruction from memory
@@ -68,9 +68,9 @@ struct STAGE_RES IF(unsigned int PC)
 	return IF_ID;
 }
 
-void ID(STAGE_RES IF_ID)
+void ID(STAGE_REG IF_ID)
 {
-	STAGE_RES result;
+	STAGE_REG result;
 
 	string ins = IF_ID.instr;
 	int opcode = convert210(ins.substr(0, 6));
@@ -81,8 +81,8 @@ void ID(STAGE_RES IF_ID)
 		result.jump = 1;
 	}
 	//always
-	result.DATA1 = res[convert210(ins.substr(6, 5))];
-	result.DATA2 = res[convert210(ins.substr(11, 5))];
+	result.DATA1 = reg[convert210(ins.substr(6, 5))];
+	result.DATA2 = reg[convert210(ins.substr(11, 5))];
 
 	if (ins_type == 0) { //I
 		result.IMM = convert210(ins.substr(16, 16));
@@ -124,10 +124,10 @@ void ID(STAGE_RES IF_ID)
 }
 
 
-struct STAGE_RES EX(STAGE_RES ID_EX)
+struct STAGE_REG EX(STAGE_REG ID_EX)
 {
 	////
-	struct STAGE_RES result;
+	struct STAGE_REG result;
 	///////// R type
 	if (ID_EX.funct == 0x21) //ADDU (2)
 	{
@@ -194,7 +194,7 @@ struct STAGE_RES EX(STAGE_RES ID_EX)
 	return result;
 }
 
-void MEM(STAGE_RES EX_MEM)
+void MEM(STAGE_REG EX_MEM)
 {
 	
 	if (EX_MEM.mem_wt == 1) {
@@ -202,20 +202,20 @@ void MEM(STAGE_RES EX_MEM)
 	}
 	
 	if (EX_MEM.mem_rd==1) {
-		EX_MEM.res_data = mem[EX_MEM.ALU_OUT];
+		EX_MEM.reg_data = mem[EX_MEM.ALU_OUT];
 		EX_MEM.wt_data = 0;
 	}
 	
 }
 
-void WB(STAGE_RES MEM_WB)
+void WB(STAGE_REG MEM_WB)
 {
 	if (MEM_WB.reg_wt == 1 && MEM_WB.mem2reg==1) {
-		res[MEM_WB.rd] = MEM_WB.res_data;
+		reg[MEM_WB.rd] = MEM_WB.reg_data;
 	}
 
 	if (MEM_WB.reg_wt == 1 && MEM_WB.mem2reg==0) {
-		res[MEM_WB.rd] = MEM_WB.ALU_OUT;
+		reg[MEM_WB.rd] = MEM_WB.ALU_OUT;
 	}
 }
 
@@ -792,17 +792,17 @@ int main(int argc, char *argv[], char *envp[]) {
 			PC = PC_temp;
 		}
 
-		print_reg(&PC, res);
+		print_reg(&PC, reg);
 
 		if (memory_range[2] != 0) {
 			print_mem(mem, memory_range[0], memory_range[1]); //print_mem(reinterpret_cast<unsigned char*>(mem), start, end);
 		}
 	}
 
-	struct STAGE_RES IF_ID;
-	struct STAGE_RES ID_EX;
-	struct STAGE_RES EX_MEM;
-	struct STAGE_RES MEM_WB;
+	struct STAGE_REG IF_ID;
+	struct STAGE_REG ID_EX;
+	struct STAGE_REG EX_MEM;
+	struct STAGE_REG MEM_WB;
 	while (true)
 	{
 		WB(MEM_WB);
