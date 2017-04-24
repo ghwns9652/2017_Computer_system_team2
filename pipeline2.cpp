@@ -86,6 +86,7 @@ void ID(STAGE_RES* IF_ID)
 
 	if (ins_type == 0) { //I
 		result.IMM = convert210(ins.substr(16, 16));
+		result.ALUSrc = 1;
 		if (opcode == 0x4 || opcode == 0x5) { // Branch instruction
 			result.branch = 1;
 			//need more here
