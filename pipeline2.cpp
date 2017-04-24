@@ -67,6 +67,10 @@ struct STAGE_REG IF(unsigned int PC)
 	return IF_ID;
 }
 
+int sign_extend(int bit16) {
+	//it's in the past one
+	return bit16;
+}
 STAGE_REG ID(STAGE_REG IF_ID)
 {
 	STAGE_REG result;
@@ -78,52 +82,109 @@ STAGE_REG ID(STAGE_REG IF_ID)
 	if (ins_type == 1) {
 		//need jump and flush
 		result.jump = 1;
+		result.reg_wt = 0;
+		result.Regdst = 0;
+		result.mem_rd = 0;
+		result.mem_wt = 0;
+		result.mem2reg = 0;
+		result.branch = 0;
+		result.ALUSrc = 0;
 	}
+
 	//always
 	result.DATA1 = reg[convert210(ins.substr(6, 5))];
 	result.DATA2 = reg[convert210(ins.substr(11, 5))];
+	result.REG2 = convert210(ins.substr(11, 5)); //i didn't used REG1
+	result.REG3 = convert210(ins.substr(16, 5));
+	result.jump = 0;
 
 	if (ins_type == 0) { //I
-		result.IMM = convert210(ins.substr(16, 16));
+		result.IMM = convert210(ins.substr(16, 16)); //need sign extended
 		result.ALUSrc = 1;
 		if (opcode == 0x4 || opcode == 0x5) { // Branch instruction
+			result.reg_wt = 0;
+			result.Regdst = 0;
+			result.mem_rd = 0;
+			result.mem_wt = 0;
+			result.mem2reg = 0;
 			result.branch = 1;
-			//need more here
+			result.ALUSrc = 0;
 
 		}
 		else if (opcode == 0x23) { // Load word  -- read only rs and write on rt
+			result.reg_wt = 1;
+			result.Regdst = 1;
 			result.mem_rd = 1;
-			result.MEM_OUT = 1;
-
+			result.mem_wt = 0;
+			result.mem2reg = 1;
+			result.branch = 0;
+			result.ALUSrc = 1;
 		}
 		else if (opcode == 0x2B) { // Store word -- read both rs rt
+			result.reg_wt = 0;
+			result.Regdst = 0;
+			result.mem_rd = 0;
 			result.mem_wt = 1;
-			result.Regdst = 1; //read both rs rt
-
-
+			result.mem2reg = 0;
+			result.branch = 0;
+			result.ALUSrc = 1;
 		}
-		else if (opcode == 0xF) { // LUI
-
-		}
-		else { //else case
-
+		else { //else case (include LUI)
+			result.reg_wt = 1;
+			result.Regdst = 1;
+			result.mem_rd = 0;
+			result.mem_wt = 0;
+			result.mem2reg = 0;
+			result.branch = 0;
+			result.ALUSrc = 1;
 		}
 	}
 
 	if (ins_type == 2) { //R
-		result.REG3 = convert210(ins.substr(16, 5));
-		result.shift = convert210(ins.substr(21, 5));
-		result.funct = convert210(ins.substr(26, 6));
+		result.reg_wt = 1;
+		result.Regdst = 0;
+		result.mem_rd = 0;
+		result.mem_wt = 0;
+		result.mem2reg = 0;
+		result.branch = 0;
+		result.ALUSrc = 0;
+
+		result.REG3 = convert210(ins.substr(16, 5));  // we really need this?
+		result.shift = convert210(ins.substr(21, 5)); // we really need this?
+		result.funct = convert210(ins.substr(26, 6)); // we really need this?
 		int funct = result.funct;
 
-		result.reg_wt = 1; //need confirm. -- right
+		if (funct == 0x8) { //FEAR OF JR
+			//how to do?
+			result.jump = 1;
+		}
+	}
+	//end of control sign make
 
-						   //if(funct == )
+	//start of ID stage specific
+
+	//For JUMP
+	if (result.jump == 1) {
+		if (opcode == 0x2) { //J code
+			PC = convert210(ins.substr(6, 26)) << 2;
+		}
+		else if (opcode == 0x3) { //JAL code
+			reg[31] = IF_ID.NPC;
+			PC = convert210(ins.substr(6, 26)) << 2;
+		}
+		else if (opcode == 0x0) { //JR
+			PC = reg[convert210(ins.substr(6, 5))]; //need check again;
+		}
+		result.stall_sign = 1; // flush 1 cycle sign
+		return result;
+	}
+	//For BRANCH
+	if (result.branch == 1) {
+		//WELCOME TO THE HELL BRANCH WORLD!
 	}
 
 	return result;
 }
-
 
 
 struct STAGE_REG EX(STAGE_REG ID_EX)
