@@ -83,19 +83,6 @@ void ID(STAGE_RES IF_ID)
 
 void EX(STAGE_RES ID_EX)
 {
-
-	//case 별로 처리
-
-	string type;
-
-	if (ID_EX_Res[0].substr(0, 5) == "000000" && ID_EX_Res[0].substr(0, 5) == "000000")
-	{
-		ID_EX_Res[3] = ID_EX_Res[2] + ID_EX_Res[1];
-	}
-
-	for (int i = 0; i < 7; i++) {
-		EX_MEM_Res[i] = ID_EX_Res[i];
-	}
 }
 
 void MEM(STAGE_RES EX_MEM)
