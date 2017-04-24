@@ -6,6 +6,19 @@
 #include <string>
 #include <map>
 
+////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////
+//global variables
+int res[32];
+size_t s = sizeof(char) * 4 * 1024 * 1024 * 1024;
+unsigned char *mem = (unsigned char *)malloc(s);
+unsigned int PC;
+unsigned int PC_temp = 0;
+unsigned int EOM = 0; // end of main
+int END_warn = 0;
+int text_size = 0;
+
+
 using namespace std;
 ////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////
@@ -104,22 +117,12 @@ void MEM(STAGE_RES EX_MEM)
 void WB(STAGE_RES MEM_WB)
 {
 	if (MEM_WB.mem_wt == 1) {
-		Reg(MEM_WB.rd) == MEM_WB.wt_data;
+		res(MEM_WB.rd) == MEM_WB.wt_data;
 	}
 }
 
 
-////////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////////
-//global variables
-int res[32];
-size_t s = sizeof(char) * 4 * 1024 * 1024 * 1024;
-unsigned char *mem = (unsigned char *)malloc(s);
-unsigned int PC;
-unsigned int PC_temp = 0;
-unsigned int EOM = 0; // end of main
-int END_warn = 0;
-int text_size = 0;
+
 
 
 
