@@ -37,7 +37,6 @@ struct STAGE_REG
 	int ALU_OUT;
 	int BR_TARGET;
 	int MEM_OUT;
-	int wt_data;
 	int reg_data;
 	//control
 	int reg_wt;
@@ -198,12 +197,13 @@ void MEM(STAGE_REG EX_MEM)
 {
 	
 	if (EX_MEM.mem_wt == 1) {
-		mem[EX_MEM.ALU_OUT] = EX_MEM.wt_data;
+		mem[EX_MEM.ALU_OUT] = EX_MEM.DATA2;
+		EX_MEM.DATA2 = 0;
 	}
 	
 	if (EX_MEM.mem_rd==1) {
 		EX_MEM.reg_data = mem[EX_MEM.ALU_OUT];
-		EX_MEM.wt_data = 0;
+		EX_MEM.DATA2 = 0;
 	}
 	
 }
