@@ -107,7 +107,7 @@ void ID(STAGE_RES* IF_ID)
 			
 		}
 	}
-
+}
 
 
 
