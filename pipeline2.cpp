@@ -11,31 +11,31 @@ using namespace std;
 ////////////////////////////////////////////////////////////////////////////////////
 struct STAGE_RES
 {
-  string instr;
-  int NPC;
-  int opcode;
-  int REG1;
-  int REG2;
-  int REG3;
-  int shift;
-  int funct;
-  int IMM;
-  int ALU_OUT;
-  int BR_TARGET;
-  int MEM_OUT;
-  int wt_data
-  //control
-  int reg_wt;
-  int PC;
-  int mem_wt;
-  int mem_rd;
-  int sign_ex;
-  int ALUSrc;
-  int branch;
-  int jump;
-  int Regdst;
-  int DATA1;
-  int DATA2;
+	string instr;
+	int NPC;
+	int opcode;
+	int REG1;
+	int REG2;
+	int REG3;
+	int shift;
+	int funct;
+	int IMM;
+	int ALU_OUT;
+	int BR_TARGET;
+	int MEM_OUT;
+	int wt_data
+		//control
+		int reg_wt;
+	int PC;
+	int mem_wt;
+	int mem_rd;
+	int sign_ex;
+	int ALUSrc;
+	int branch;
+	int jump;
+	int Regdst;
+	int DATA1;
+	int DATA2;
 };
 
 struct STAGE_RES IF(unsigned int PC)
@@ -49,16 +49,16 @@ struct STAGE_RES IF(unsigned int PC)
 	PC = PC + 4;
 	IF_ID.PC = PC; //Save PC value to IF_ID_Register
 
-	//	type_checker(atoi(instruction.substr(0, 5).c_str()));
+				   //	type_checker(atoi(instruction.substr(0, 5).c_str()));
 
-	////타입에 따라 담는 내용을 변경해줄 필요?
-	//// IF/ID Res에 담기
-	//IF_ID_Res[0] = atoi(bin.substr(0, 5).c_str());
-	//IF_ID_Res[1] = atoi(bin.substr(6, 10).c_str());
-	//IF_ID_Res[2] = atoi(bin.substr(11, 15).c_str());
-	//IF_ID_Res[3] = atoi(bin.substr(16, 20).c_str());
-	//IF_ID_Res[4] = atoi(bin.substr(21, 25).c_str());
-	//IF_ID_Res[5] = atoi(bin.substr(26, 31).c_str());
+				   ////타입에 따라 담는 내용을 변경해줄 필요?
+				   //// IF/ID Res에 담기
+				   //IF_ID_Res[0] = atoi(bin.substr(0, 5).c_str());
+				   //IF_ID_Res[1] = atoi(bin.substr(6, 10).c_str());
+				   //IF_ID_Res[2] = atoi(bin.substr(11, 15).c_str());
+				   //IF_ID_Res[3] = atoi(bin.substr(16, 20).c_str());
+				   //IF_ID_Res[4] = atoi(bin.substr(21, 25).c_str());
+				   //IF_ID_Res[5] = atoi(bin.substr(26, 31).c_str());
 	IF_ID.instr = instruction; //Save PC value to IF_ID_Register
 	return IF_ID;
 }
@@ -73,21 +73,21 @@ void ID(STAGE_REG IF_ID)
 		ID_EX_Res[3] = data_mem[IF_ID_Res[0].substr(16, 20)];
 	}
 }
-	
+
 
 void EX(STAGE_REG ID_EX)
 {
-	
+
 	//case 별로 처리
-	
+
 	string type;
-	
+
 	if (ID_EX_Res[0].substr(0, 5) == "000000" && ID_EX_Res[0].substr(0, 5) == "000000")
 	{
 		ID_EX_Res[3] = ID_EX_Res[2] + ID_EX_Res[1];
 	}
 
-	for (int i = 0; i < 7; i++){
+	for (int i = 0; i < 7; i++) {
 		EX_MEM_Res[i] = ID_EX_Res[i];
 	}
 }
@@ -187,12 +187,10 @@ int bin_parser(string oneline) {
 		unsigned int rt_int = convert210(oneline.substr(11, 5));
 		unsigned int rd_int = convert210(oneline.substr(16, 5));
 		unsigned int shamt_int = convert210(oneline.substr(21, 5));
-		run_R(funct_int, rs_int, rt_int, rd_int, shamt_int);
 	}
 	else if (type == 1)
 	{
 		unsigned int jumptarget_int = convert210(oneline.substr(6, 26));
-		run_J(op_int, jumptarget_int);
 	}
 	else
 	{
@@ -203,9 +201,6 @@ int bin_parser(string oneline) {
 		if (imm_int >> 15 == 1) {
 			imm_int = imm_int | 0xFFFF0000;
 		}
-		//cout << "imm_int =  " << imm_int << endl;
-		//cout << "string  =  " << oneline.substr(16, 16) << endl;
-		run_I(op_int, rs_int, rt_int, imm_int);
 	}
 	return 0;
 }
@@ -239,12 +234,6 @@ void save_ins(int* text_length, int* data_length, unsigned char * mem, int num_i
 				}
 			}
 		}
-		//if (num_instruc != 0)
-		//{
-		//   *text_length = num_instruc * 4; // 실행시키기 원하는 줄 수 입력
-		//}
-		//cout << *text_length << endl;
-		//cout << *data_length << endl;
 	}
 	ifile.close(); // 파일 닫기
 }
@@ -324,10 +313,6 @@ void create_bin(string file_name) {
 	map <string, string> op;
 	map <string, string> funct;
 	map <string, string> type;
-
-	//op.clear();
-	//funct.clear();
-	//type.clear();
 
 	op.insert(pair<string, string>("addiu", "001001"));
 	op.insert(pair<string, string>("addu", "000000"));
@@ -478,12 +463,6 @@ void create_bin(string file_name) {
 	else
 	{
 		while (file_ >> testcode) {
-
-			// 첫 개행문자 제거
-			/*if (data.substr(0, 1) == "\n") {
-			data.erase(0, 1);
-			}*/
-
 			// "," 제거
 			if (testcode.substr(testcode.size() - 1, 1) == ",") {
 				testcode.erase(testcode.size() - 1);
@@ -497,17 +476,12 @@ void create_bin(string file_name) {
 				la_temp = testcode.substr(1);
 				--la_item;
 			}
-			else if (la_item == 1) { // (주의)data의 array로 받을 때 +연산 고려 안 했음
-									 /*for (int m = testcode.size() - 1; m == 0;) {
-									 if (testcode.substr(m, 1) == "+") {
-									 testcode = to_string(read_mem(label_map.find(testcode.substr(0, m))->second + atoi(testcode.substr(m).c_str())));
-									 }
-									 }*/
+			else if (la_item == 1) {
+
 				--la_item;
 				//label 값 읽어오기
 				if (label_map.find(testcode) != label_map.end()) {
 					testcode = to_string(label_map.find(testcode)->second);
-					//cout << read_mem(label_map.find(testcode)->second) << endl;
 				}
 
 				if (testcode.substr(0, 2) == "0x") {
@@ -728,7 +702,7 @@ int main(int argc, char *argv[], char *envp[]) {
 			print_mem(mem, memory_range[0], memory_range[1]); //print_mem(reinterpret_cast<unsigned char*>(mem), start, end);
 		}
 	}
-	
+
 	struct STAGE_RES IF_ID;
 	struct STAGE_RES ID_EX;
 	struct STAGE_RES EX_MEM;
@@ -739,9 +713,9 @@ int main(int argc, char *argv[], char *envp[]) {
 		MEM(EX_MEM);
 		EX(ID_EX);
 		ID(IF_ID);
-		IF_ID=IF(PC);
+		IF_ID = IF(PC);
 	}
-	
+
 	free(mem);
 	return 0;
 }
