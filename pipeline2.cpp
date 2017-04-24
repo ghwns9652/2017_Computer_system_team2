@@ -67,7 +67,7 @@ struct STAGE_REG IF(unsigned int PC)
 	return IF_ID;
 }
 
-void ID(STAGE_REG IF_ID)
+struct STAGE_REG ID(STAGE_REG IF_ID)
 {
 	STAGE_REG result;
 
@@ -193,7 +193,7 @@ struct STAGE_REG EX(STAGE_REG ID_EX)
 	return result;
 }
 
-void MEM(STAGE_REG EX_MEM)
+struct STAGE_REG MEM(STAGE_REG EX_MEM)
 {
 	
 	if (EX_MEM.mem_wt == 1) {
