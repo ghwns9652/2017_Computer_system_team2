@@ -152,11 +152,11 @@ struct STAGE_RES EX(STAGE_RES ID_EX)
 	}
 	else if (ID_EX.funct == 0) //17 sll
 	{
-		result.ALU_OUT = res[rt] << ID_EX.shift;
+		result.ALU_OUT = ID_EX.DATA2 << ID_EX.shift;
 	}
 	else if (ID_EX.funct == 2) //18 srl
 	{
-		result.ALU_OUT = res[rt] >> ID_EX.shift;
+		result.ALU_OUT = ID_EX.DATA2 >> ID_EX.shift;
 	}
 	else if (ID_EX.funct == 0x23) //20 subu
 	{
