@@ -717,7 +717,6 @@ int main(int argc, char *argv[], char *envp[]) {
 	}
 
 	create_bin(argv[assem_index]);
-	run_bin(num_instruc, d_exist, memory_range);
 	if (!(d_exist) || num_instruc == 0) {
 		if (!(0x400000 <= PC && PC < (0x400000 + text_size))) {
 			PC = PC_temp;
