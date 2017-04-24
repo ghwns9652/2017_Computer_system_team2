@@ -30,6 +30,7 @@ struct STAGE_RES
 	int REG1;
 	int REG2;
 	int REG3;
+	int rd;
 	int shift;
 	int funct;
 	int IMM;
@@ -92,14 +93,9 @@ void MEM(STAGE_RES EX_MEM)
 void WB(STAGE_RES MEM_WB)
 {
 	if (MEM_WB.mem_wt == 1) {
-		res(MEM_WB.rd) == MEM_WB.wt_data;
+		res[MEM_WB.rd] == MEM_WB.wt_data;
 	}
 }
-
-
-
-
-
 
 string print_bin(unsigned int num, int len) {
 	int length = len - 1;
