@@ -109,38 +109,6 @@ void ID(STAGE_RES* IF_ID)
 	}
 
 
-void EX(STAGE_RES ID_EX)
-{
-	////
-
-	///////// R type
-	if (ID_EX.funct == 0x21) //ADDU (2)
-	{
-		ID_EX.ALU_OUT = ID_EX.DATA1 + ID_EX.DATA2;
-	}
-	else if (ID_EX.funct == 0x24) //AND (3)
-	{
-		ID_EX.ALU_OUT = ID_EX.DATA1 & ID_EX.DATA2;
-	}
-	else if (ID_EX.funct == 0x27) //12 nor
-	{
-		ID_EX.ALU_OUT = (~(ID_EX.DATA1 | ID_EX.DATA2));
-	}
-	struct STAGE_RES IF_ID;
-	// 메모리에서 명렁어 읽어오기
-	string instruction;
-	instruction = read_mem(mem[PC]); // take instruction from memory
-
-	PC = PC + 4;
-	IF_ID.PC = PC; //Save PC value to IF_ID_Register
-	IF_ID.instr = instruction; //Save PC value to IF_ID_Register
-
-	return IF_ID;
-}
-
-void ID(STAGE_RES IF_ID)
-{
-}
 
 
 struct STAGE_RES EX(STAGE_RES ID_EX)
