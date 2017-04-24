@@ -38,11 +38,13 @@ struct STAGE_RES
 	int BR_TARGET;
 	int MEM_OUT;
 	int wt_data;
+	int res_data;
 	//control
 	int reg_wt;
 	int PC;
 	int mem_wt;
 	int mem_rd;
+	int mem2reg;
 	int sign_ex;
 	int ALUSrc;
 	int branch;
@@ -177,12 +179,26 @@ struct STAGE_RES EX(STAGE_RES ID_EX)
 
 void MEM(STAGE_RES EX_MEM)
 {
+	
+	if (EX_MEM.mem_wt == 1) {
+		mem[EX_MEM.ALU_OUT] = EX_MEM.wt_data;
+	}
+	
+	if (EX_MEM.mem_rd==1) {
+		EX_MEM.res_data = mem[EX_MEM.ALU_OUT];
+		EX_MEM.wt_data = 0;
+	}
+	
 }
 
 void WB(STAGE_RES MEM_WB)
 {
-	if (MEM_WB.mem_wt == 1) {
-		res[MEM_WB.rd] == MEM_WB.wt_data;
+	if (MEM_WB.reg_wt == 1 && MEM_WB.mem2reg==1) {
+		res[MEM_WB.rd] = MEM_WB.res_data;
+	}
+
+	if (MEM_WB.reg_wt == 1 && MEM_WB.mem2reg==0) {
+		res[MEM_WB.rd] = MEM_WB.ALU_OUT;
 	}
 }
 
