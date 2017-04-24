@@ -93,7 +93,7 @@ void ID(STAGE_RES IF_ID)
 		}
 		else if (opcode == 0x23) { // Load word  -- read only rs and write on rt
 			result.mem_rd = 1;
-			result.MEM_OUT = 1;
+			result.mem2reg = 1;
 			
 		}
 		else if (opcode == 0x2B) { // Store word -- read both rs rt
