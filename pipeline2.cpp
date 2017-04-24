@@ -67,9 +67,9 @@ struct STAGE_REG IF(unsigned int PC)
 	return IF_ID;
 }
 
-STAGE_RES ID(STAGE_RES IF_ID)
+STAGE_REG ID(STAGE_REG IF_ID)
 {
-	STAGE_RES result;
+	STAGE_REG result;
 
 	string ins = IF_ID.instr;
 	int opcode = convert210(ins.substr(0, 6));
@@ -80,8 +80,8 @@ STAGE_RES ID(STAGE_RES IF_ID)
 		result.jump = 1;
 	}
 	//always
-	result.DATA1 = res[convert210(ins.substr(6, 5))];
-	result.DATA2 = res[convert210(ins.substr(11, 5))];
+	result.DATA1 = reg[convert210(ins.substr(6, 5))];
+	result.DATA2 = reg[convert210(ins.substr(11, 5))];
 
 	if (ins_type == 0) { //I
 		result.IMM = convert210(ins.substr(16, 16));
@@ -94,19 +94,19 @@ STAGE_RES ID(STAGE_RES IF_ID)
 		else if (opcode == 0x23) { // Load word  -- read only rs and write on rt
 			result.mem_rd = 1;
 			result.MEM_OUT = 1;
-			
+
 		}
 		else if (opcode == 0x2B) { // Store word -- read both rs rt
 			result.mem_wt = 1;
 			result.Regdst = 1; //read both rs rt
-			
-			
+
+
 		}
 		else if (opcode == 0xF) { // LUI
 
 		}
 		else { //else case
-			
+
 		}
 	}
 
@@ -118,7 +118,7 @@ STAGE_RES ID(STAGE_RES IF_ID)
 
 		result.reg_wt = 1; //need confirm. -- right
 
-		//if(funct == )
+						   //if(funct == )
 	}
 
 	return result;
