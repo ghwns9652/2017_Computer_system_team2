@@ -78,13 +78,6 @@ struct STAGE_RES IF(unsigned int PC)
 
 void ID(STAGE_RES IF_ID)
 {
-	//case 별로 처리
-	if (IF_ID_Res[0].substr(0, 5) == "000000" && IF_ID_Res[0].substr(0, 5) == "000000")
-	{
-		ID_EX_Res[1] = data_mem[IF_ID_Res[0].substr(6, 10)];
-		ID_EX_Res[2] = data_mem[IF_ID_Res[0].substr(11, 15)];
-		ID_EX_Res[3] = data_mem[IF_ID_Res[0].substr(16, 20)];
-	}
 }
 
 
@@ -107,11 +100,6 @@ void EX(STAGE_RES ID_EX)
 
 void MEM(STAGE_RES EX_MEM)
 {
-	//load/store 예외처리
-
-	for (int i = 0; i < 7; i++) {
-		MEM_WB_Res[i] = EX_MEM_Res[i];
-	}
 }
 
 void WB(STAGE_RES MEM_WB)
