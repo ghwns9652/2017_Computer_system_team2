@@ -514,21 +514,7 @@ void WB(STAGE_REG MEM_WB)
 		Reg(MEM_WB.rd) == MEM_WB.wt_data;
 	}
 }
-void main()
-{
-	struct STAGE_RES IF_ID;
-	struct STAGE_RES ID_EX;
-	struct STAGE_RES EX_MEM;
-	struct STAGE_RES MEM_WB;
-	while (true)
-	{
-		WB(MEM_WB);
-		MEM(EX_MEM);
-		EX(ID_EX);
-		ID(IF_ID);
-		IF_ID=IF(PC);
-	}
-}
+
 
 ////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////
@@ -1217,7 +1203,20 @@ int main(int argc, char *argv[], char *envp[]) {
 			print_mem(mem, memory_range[0], memory_range[1]); //print_mem(reinterpret_cast<unsigned char*>(mem), start, end);
 		}
 	}
-
+	
+	struct STAGE_RES IF_ID;
+	struct STAGE_RES ID_EX;
+	struct STAGE_RES EX_MEM;
+	struct STAGE_RES MEM_WB;
+	while (true)
+	{
+		WB(MEM_WB);
+		MEM(EX_MEM);
+		EX(ID_EX);
+		ID(IF_ID);
+		IF_ID=IF(PC);
+	}
+	
 	free(mem);
 	return 0;
 }
