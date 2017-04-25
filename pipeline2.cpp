@@ -51,6 +51,7 @@ struct STAGE_REG
 	int Regdst;
 	int DATA1;
 	int DATA2;
+	int stall_sign;
 };
 
 struct STAGE_REG IF(unsigned int PC)
@@ -851,18 +852,7 @@ int main(int argc, char *argv[], char *envp[]) {
 	}
 
 	create_bin(argv[assem_index]);
-	if (!(d_exist) || num_instruc == 0) {
-		if (!(0x400000 <= PC && PC < (0x400000 + text_size))) {
-			PC = PC_temp;
-		}
-
-		print_reg(&PC, reg);
-
-		if (memory_range[2] != 0) {
-			print_mem(mem, memory_range[0], memory_range[1]); //print_mem(reinterpret_cast<unsigned char*>(mem), start, end);
-		}
-	}
-
+	
 	struct STAGE_REG IF_ID;
 	struct STAGE_REG ID_EX;
 	struct STAGE_REG EX_MEM;
@@ -875,6 +865,19 @@ int main(int argc, char *argv[], char *envp[]) {
 		ID_EX = ID(IF_ID);
 		IF_ID = IF(PC);
 	}
+	
+	if (!(d_exist) || num_instruc == 0) {
+		if (!(0x400000 <= PC && PC < (0x400000 + text_size))) {
+			PC = PC_temp;
+		}
+
+		print_reg(&PC, reg);
+
+		if (memory_range[2] != 0) {
+			print_mem(mem, memory_range[0], memory_range[1]); //print_mem(reinterpret_cast<unsigned char*>(mem), start, end);
+		}
+	}
+
 
 	free(mem);
 	return 0;
