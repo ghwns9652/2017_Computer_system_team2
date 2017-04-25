@@ -59,7 +59,7 @@ struct STAGE_REG IF(unsigned int PC)
 	struct STAGE_REG IF_ID;
 	// 메모리에서 명렁어 읽어오기
 	string instruction;
-	instruction = read_mem(mem[PC]); // take instruction from memory
+	instruction = print_bin( read_mem(mem[PC]), 32); // take instruction from memory
 	
 	PC = PC + 4;
 	IF_ID.PC = PC; //Save PC value to IF_ID_Register
