@@ -5,7 +5,7 @@
 #include <fstream>
 #include <string>
 #include <map>
-
+#include "func.h"
 ////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////
 //global variables
@@ -273,7 +273,7 @@ struct STAGE_REG MEM(STAGE_REG EX_MEM)
 		EX_MEM.reg_data = mem[EX_MEM.ALU_OUT];
 		EX_MEM.DATA2 = 0;
 	}
-	
+	return EX_MEM;
 }
 
 void WB(STAGE_REG MEM_WB)
