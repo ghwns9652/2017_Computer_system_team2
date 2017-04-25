@@ -24,7 +24,7 @@ using namespace std;
 ////////////////////////////////////////////////////////////////////////////////////
 struct STAGE_REG
 {
-	string instr;
+	string instr="00000000000000000000000000000000";
 	int NPC;
 	int opcode;
 	int REG1;
@@ -54,17 +54,17 @@ struct STAGE_REG
 	int stall_sign;
 };
 
-struct STAGE_REG IF(unsigned int PC)
+STAGE_REG IF(unsigned int PC)
 {
 	struct STAGE_REG IF_ID;
 	// 메모리에서 명렁어 읽어오기
 	string instruction;
 	instruction = print_bin( read_mem(mem[PC]), 32); // take instruction from memory
-	
+
 	PC = PC + 4;
 	IF_ID.PC = PC; //Save PC value to IF_ID_Register
 	IF_ID.instr = instruction; //Save PC value to IF_ID_Register
-	
+
 	return IF_ID;
 }
 
@@ -97,10 +97,11 @@ STAGE_REG ID(STAGE_REG IF_ID)
 	}
 
 	//always
+	cout << ins << endl;
 	result.DATA1 = reg[convert210(ins.substr(6, 5))];
 	result.DATA2 = reg[convert210(ins.substr(11, 5))];
 	result.REG2 = convert210(ins.substr(11, 5)); //i didn't used REG1
-	result.REG3 = convert210(ins.substr(16, 5));
+	result.REG3 = convert210(ins.substr(16, 5)); // either REG2 or REG3 become REG destination at EX stage
 	result.jump = 0;
 
 	if (ins_type == 0) { //I
@@ -114,7 +115,6 @@ STAGE_REG ID(STAGE_REG IF_ID)
 			result.mem2reg = 0;
 			result.branch = 1;
 			result.ALUSrc = 0;
-
 		}
 		else if (opcode == 0x23) { // Load word  -- read only rs and write on rt
 			result.reg_wt = 1;
@@ -160,7 +160,7 @@ STAGE_REG ID(STAGE_REG IF_ID)
 
 		if (funct == 0x8) { //FEAR OF JR
 			//how to do?
-			result.jump = 1;
+			result.jump = 1; //?
 		}
 	}
 	//end of control sign make
@@ -191,10 +191,11 @@ STAGE_REG ID(STAGE_REG IF_ID)
 }
 
 
-struct STAGE_REG EX(STAGE_REG ID_EX)
+
+STAGE_REG EX(STAGE_REG ID_EX)
 {
 	////
-	struct STAGE_REG result;
+	STAGE_REG result;
 	///////// R type
 	if (ID_EX.funct == 0x21) //ADDU (2)
 	{
@@ -261,15 +262,15 @@ struct STAGE_REG EX(STAGE_REG ID_EX)
 	return result;
 }
 
-struct STAGE_REG MEM(STAGE_REG EX_MEM)
+STAGE_REG MEM(STAGE_REG EX_MEM)
 {
-	
+
 	if (EX_MEM.mem_wt == 1) {
 		mem[EX_MEM.ALU_OUT] = EX_MEM.DATA2;
 		EX_MEM.DATA2 = 0;
 	}
-	
-	if (EX_MEM.mem_rd==1) {
+
+	if (EX_MEM.mem_rd == 1) {
 		EX_MEM.reg_data = mem[EX_MEM.ALU_OUT];
 		EX_MEM.DATA2 = 0;
 	}
@@ -278,11 +279,11 @@ struct STAGE_REG MEM(STAGE_REG EX_MEM)
 
 void WB(STAGE_REG MEM_WB)
 {
-	if (MEM_WB.reg_wt == 1 && MEM_WB.mem2reg==1) {
+	if (MEM_WB.reg_wt == 1 && MEM_WB.mem2reg == 1) {
 		reg[MEM_WB.rd] = MEM_WB.reg_data;
 	}
 
-	if (MEM_WB.reg_wt == 1 && MEM_WB.mem2reg==0) {
+	if (MEM_WB.reg_wt == 1 && MEM_WB.mem2reg == 0) {
 		reg[MEM_WB.rd] = MEM_WB.ALU_OUT;
 	}
 }
@@ -334,6 +335,9 @@ int type_checker(int op) {
 	else    // I type
 		return 0;
 }
+
+
+
 
 
 void save_ins(int* text_length, int* data_length, unsigned char * mem, int num_instruc = 0) {
@@ -778,6 +782,10 @@ int run_bin(int num_instruc, int d_exist, unsigned int* memory_range) {
 	{
 		reg[i] = 0;
 	}
+	STAGE_REG IF_ID;
+	STAGE_REG ID_EX;
+	STAGE_REG EX_MEM;
+	STAGE_REG MEM_WB;
 
 	//save instruction in memory
 	int text_size_ptr = 0;
@@ -786,7 +794,7 @@ int run_bin(int num_instruc, int d_exist, unsigned int* memory_range) {
 
 	save_ins(&text_size_ptr, &data_size_ptr, mem, num_instruc);
 	text_size = text_size_ptr;
-	//cout << text_size_ptr << endl;
+	cout << text_size_ptr << endl;
 	//read instruction from memory
 	//for (int line = 0; line < text_size_ptr; line ++)
 	while (0x400000 <= PC && PC < (0x400000 + text_size_ptr))
@@ -798,17 +806,35 @@ int run_bin(int num_instruc, int d_exist, unsigned int* memory_range) {
 		{
 			str_line.append(print_bin(mem[PC + i], 8));
 		}
-		
+		// PC 이전값 저장
+		/* main의 끝을 위한 부분이었다
+		if (PC != PC_temp) {
+			END_warn = 0;
+		}
+		PC_temp = PC;
+
+		if (END_warn == 1 && PC == EOM) {
+			break;
+		}
+		else if (END_warn == 1 && PC == (0x400000 + text_size_ptr - 4)) {
+			break;
+		}
+
+		if (PC == EOM || PC == (0x400000 + text_size_ptr - 4)) {
+			END_warn = 1;
+		}
+		else {
+			//END_warn = 0;
+			PC += 4;
+		}*/
+
 		WB(MEM_WB);
 		MEM_WB = MEM(EX_MEM);
 		EX_MEM = EX(ID_EX);
 		ID_EX = ID(IF_ID);
 		IF_ID = IF(PC);
-
+		// something PC error between here
 		if (d_exist) {
-			if (!(0x400000 <= PC && PC < (0x400000 + text_size))) {
-				PC = PC_temp;
-			}
 			print_reg(&PC, reg);
 			if (memory_range[2] != 0) {
 				print_mem(mem, memory_range[0], memory_range[1]);  //print_mem(reinterpret_cast<unsigned char*>(mem), start, end);
@@ -819,12 +845,11 @@ int run_bin(int num_instruc, int d_exist, unsigned int* memory_range) {
 	return 0;
 }
 
-
 int main(int argc, char *argv[], char *envp[]) {
 	//메모리 초기화
-	for (int i = 0; i < s; i++) {
+	/*for (int i = 0; i < s; i++) {
 		mem[i] = 0;
-	}
+	}*/
 
 	unsigned int memory_range[3]; // memory range
 	memory_range[2] = 0;
@@ -872,21 +897,18 @@ int main(int argc, char *argv[], char *envp[]) {
 
 	create_bin(argv[assem_index]);
 	run_bin(num_instruc, d_exist, memory_range);
-	
-	
+
 	if (!(d_exist) || num_instruc == 0) {
-		if (!(0x400000 <= PC && PC < (0x400000 + text_size))) {
-			PC = PC_temp;
-		}
-
 		print_reg(&PC, reg);
-
 		if (memory_range[2] != 0) {
 			print_mem(mem, memory_range[0], memory_range[1]); //print_mem(reinterpret_cast<unsigned char*>(mem), start, end);
 		}
 	}
 
 
+
 	free(mem);
+
+	
 	return 0;
 }
