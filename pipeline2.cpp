@@ -154,7 +154,6 @@ STAGE_REG ID(STAGE_REG IF_ID)
 		result.branch = 0;
 		result.ALUSrc = 0;
 
-		result.REG3 = convert210(ins.substr(16, 5));  // we really need this?
 		result.shift = convert210(ins.substr(21, 5)); // we really need this?
 		result.funct = convert210(ins.substr(26, 6)); // we really need this?
 		int funct = result.funct;
