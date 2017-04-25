@@ -70,6 +70,10 @@ struct STAGE_REG IF(unsigned int PC)
 
 int sign_extend(int bit16) {
 	//it's in the past one
+	int temp = bit16 & 0x00008000;
+	if (temp == 0x00008000) {
+		bit16 = bit16 | 0xFFFF0000;
+	}
 	return bit16;
 }
 STAGE_REG ID(STAGE_REG IF_ID)
@@ -100,7 +104,7 @@ STAGE_REG ID(STAGE_REG IF_ID)
 	result.jump = 0;
 
 	if (ins_type == 0) { //I
-		result.IMM = convert210(ins.substr(16, 16)); //need sign extended
+		result.IMM = sign_extend(convert210(ins.substr(16, 16))); //need sign extended
 		result.ALUSrc = 1;
 		if (opcode == 0x4 || opcode == 0x5) { // Branch instruction
 			result.reg_wt = 0;
