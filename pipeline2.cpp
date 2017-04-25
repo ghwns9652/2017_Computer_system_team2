@@ -335,37 +335,23 @@ int type_checker(int op) {
 		return 0;
 }
 
-int bin_parser(string oneline) {
+int pipeline(string oneline) {
 	if (oneline.length() != 32)
 	{
 		cout << "bin line error" << endl;
 		return 1;
 	}
-	string op_str = oneline.substr(0, 6);
-	int op_int = convert210(op_str);
-	int type = type_checker(op_int);
-	if (type == 2) // R type
-	{
-		unsigned int funct_int = convert210(oneline.substr(26, 6));
-		unsigned int rs_int = convert210(oneline.substr(6, 5));
-		unsigned int rt_int = convert210(oneline.substr(11, 5));
-		unsigned int rd_int = convert210(oneline.substr(16, 5));
-		unsigned int shamt_int = convert210(oneline.substr(21, 5));
-	}
-	else if (type == 1)
-	{
-		unsigned int jumptarget_int = convert210(oneline.substr(6, 26));
-	}
-	else
-	{
+	STAGE_REG IF_ID;
+	STAGE_REG ID_EX;
+	STAGE_REG EX_MEM;
+	STAGE_REG MEM_WB;
 
-		unsigned int rs_int = convert210(oneline.substr(6, 5));
-		unsigned int rt_int = convert210(oneline.substr(11, 5));
-		int imm_int = convert210(oneline.substr(16, 16));
-		if (imm_int >> 15 == 1) {
-			imm_int = imm_int | 0xFFFF0000;
-		}
-	}
+	WB(MEM_WB);
+	MEM_WB = MEM(EX_MEM);
+	EX_MEM = EX(ID_EX);
+	ID_EX = ID(IF_ID);
+	IF_ID = IF(PC);
+
 	return 0;
 }
 
@@ -804,6 +790,53 @@ void create_bin(string file_name) {
 	//end of file 02
 }
 
+int run_bin(int num_instruc, int d_exist, unsigned int* memory_range) {
+	//initialize
+	PC = 0x400000;
+	for (int i = 0; i < 32; i++)
+	{
+		reg[i] = 0;
+	}
+
+	//save instruction in memory
+	int text_size_ptr = 0;
+	int data_size_ptr = 0;
+	int loop_count = 0;
+
+	save_ins(&text_size_ptr, &data_size_ptr, mem, num_instruc);
+	text_size = text_size_ptr;
+	//cout << text_size_ptr << endl;
+	//read instruction from memory
+	//for (int line = 0; line < text_size_ptr; line ++)
+	while (0x400000 <= PC && PC < (0x400000 + text_size_ptr))
+	{
+		if ((loop_count >= num_instruc) & (num_instruc != -1))
+			break;
+		string str_line = "";
+		for (int i = 0; i < 4; i++)
+		{
+			str_line.append(print_bin(mem[PC + i], 8));
+		}
+
+		PC += 4;
+
+		pipeline(str_line);
+
+		if (d_exist) {
+			if (!(0x400000 <= PC && PC < (0x400000 + text_size))) {
+				PC = PC_temp;
+			}
+			print_reg(&PC, reg);
+			if (memory_range[2] != 0) {
+				print_mem(mem, memory_range[0], memory_range[1]);  //print_mem(reinterpret_cast<unsigned char*>(mem), start, end);
+			}
+		}
+		loop_count += 1;
+	}
+	return 0;
+}
+
+
 int main(int argc, char *argv[], char *envp[]) {
 	//메모리 초기화
 	for (int i = 0; i < s; i++) {
@@ -855,19 +888,8 @@ int main(int argc, char *argv[], char *envp[]) {
 	}
 
 	create_bin(argv[assem_index]);
+	run_bin(num_instruc, d_exist, memory_range);
 	
-	struct STAGE_REG IF_ID;
-	struct STAGE_REG ID_EX;
-	struct STAGE_REG EX_MEM;
-	struct STAGE_REG MEM_WB;
-	while (true)
-	{
-		WB(MEM_WB);
-		MEM_WB = MEM(EX_MEM);
-		EX_MEM = EX(ID_EX);
-		ID_EX = ID(IF_ID);
-		IF_ID = IF(PC);
-	}
 	
 	if (!(d_exist) || num_instruc == 0) {
 		if (!(0x400000 <= PC && PC < (0x400000 + text_size))) {
