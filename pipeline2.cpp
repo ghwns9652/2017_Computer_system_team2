@@ -335,25 +335,6 @@ int type_checker(int op) {
 		return 0;
 }
 
-int pipeline(string oneline) {
-	if (oneline.length() != 32)
-	{
-		cout << "bin line error" << endl;
-		return 1;
-	}
-	STAGE_REG IF_ID;
-	STAGE_REG ID_EX;
-	STAGE_REG EX_MEM;
-	STAGE_REG MEM_WB;
-
-	WB(MEM_WB);
-	MEM_WB = MEM(EX_MEM);
-	EX_MEM = EX(ID_EX);
-	ID_EX = ID(IF_ID);
-	IF_ID = IF(PC);
-
-	return 0;
-}
 
 void save_ins(int* text_length, int* data_length, unsigned char * mem, int num_instruc = 0) {
 	int line_count = 0;
@@ -817,10 +798,12 @@ int run_bin(int num_instruc, int d_exist, unsigned int* memory_range) {
 		{
 			str_line.append(print_bin(mem[PC + i], 8));
 		}
-
-		PC += 4;
-
-		pipeline(str_line);
+		
+		WB(MEM_WB);
+		MEM_WB = MEM(EX_MEM);
+		EX_MEM = EX(ID_EX);
+		ID_EX = ID(IF_ID);
+		IF_ID = IF(PC);
 
 		if (d_exist) {
 			if (!(0x400000 <= PC && PC < (0x400000 + text_size))) {
