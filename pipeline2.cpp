@@ -193,8 +193,64 @@ STAGE_REG ID(STAGE_REG IF_ID)
 
 struct STAGE_REG EX(STAGE_REG ID_EX)
 {
+	int ALUcontrol;
+	//// input ALUSrc ALUOp ALUfunct
+	if (ID_EX.ALUOp == 0) {
+		ALUcontrol = 2;
+	}
+	else if (ID_EX.ALUOp == 1) {
+		ALUcontrol = 6;
+	}
+	else if (ID_EX.ALUOp == 2) {
+		if (ID_EX.ALUfunct == 32) {
+			ALUcontrol = 2;
+		}
+		else if (ID_EX.ALUfunct == 34) {
+			ALUcontrol = 6;
+		}
+		else if (ID_EX.ALUfunct == 36) {
+			ALUcontrol = 0;
+		}
+		else if (ID_EX.ALUfunct == 37) {
+			ALUcontrol = 1;
+		}
+		else if (ID_EX.ALUfunct == 42) {
+			ALUcontrol = 7;
+		}
+	}
 	////
 	struct STAGE_REG result;
+	///////////////////////////////////새로 짠거
+	/// ALUSrc로 DATA2 or IMM 구별
+	int d1;
+	int d2;
+	d1 = ID_EX.DATA1;
+	if (ID_EX.ALUSrc == 0) {
+		d2 = ID_EX.DATA2;
+	}
+	else if (ID_EX.ALUSrc == 0) {
+		d2 = ID_EX.IMM;
+	}
+
+	//////ALU control 으로 연산
+	if (ALU control == 0) { //and
+		result.ALU_OUT = d1 & d2;
+	}
+	else if (ALU control == 1) { //or
+		result.ALU_OUT = d1 | d2;
+	}
+	else if (ALU control == 2) { //add
+		result.ALU_OUT = d1 + d2;
+	}
+	else if (ALU control == 6) { //sub
+		result.ALU_OUT = d1 + d2;
+	}
+	else if (ALU control == 7) { //set on less than
+		result.ALU_OUT = (d1 < d2 ? 1:0);
+	}
+	
+	
+	/////////////////////////////////// 이전꺼
 	///////// R type
 	if (ID_EX.funct == 0x21) //ADDU (2)
 	{
@@ -263,17 +319,28 @@ struct STAGE_REG EX(STAGE_REG ID_EX)
 
 struct STAGE_REG MEM(STAGE_REG EX_MEM)
 {
-	
+
 	if (EX_MEM.mem_wt == 1) {
 		mem[EX_MEM.ALU_OUT] = EX_MEM.DATA2;
 		EX_MEM.DATA2 = 0;
 	}
-	
-	if (EX_MEM.mem_rd==1) {
+
+	if (EX_MEM.mem_rd == 1) {
 		EX_MEM.reg_data = mem[EX_MEM.ALU_OUT];
 		EX_MEM.DATA2 = 0;
 	}
-	
+
+}
+
+void WB(STAGE_REG MEM_WB)
+{
+	if (MEM_WB.reg_wt == 1 && MEM_WB.mem2reg == 1) {
+		reg[MEM_WB.rd] = MEM_WB.reg_data;
+	}
+
+	if (MEM_WB.reg_wt == 1 && MEM_WB.mem2reg == 0) {
+		reg[MEM_WB.rd] = MEM_WB.ALU_OUT;
+	}
 }
 
 void WB(STAGE_REG MEM_WB)
