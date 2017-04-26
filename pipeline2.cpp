@@ -25,7 +25,7 @@ using namespace std;
 struct STAGE_REG
 {
 	string instr="00000000000000000000000000000000";
-	int NPC;
+	unsigned int NPC;
 	int opcode;
 	int REG1;
 	int REG2;
@@ -40,7 +40,7 @@ struct STAGE_REG
 	int reg_data;
 	//control
 	int reg_wt;
-	int PC;
+	//int PC;
 	int mem_wt;
 	int mem_rd;
 	int mem2reg;
@@ -54,7 +54,7 @@ struct STAGE_REG
 	int stall_sign;
 };
 
-STAGE_REG IF(unsigned int PC)
+STAGE_REG IF(void) //PC를 인자로 주면 PC값이 변경되지 않는 문제점이 있었다!
 {
 	struct STAGE_REG IF_ID;
 	// 메모리에서 명렁어 읽어오기
@@ -62,7 +62,7 @@ STAGE_REG IF(unsigned int PC)
 	instruction = print_bin( read_mem(mem[PC]), 32); // take instruction from memory
 
 	PC = PC + 4;
-	IF_ID.PC = PC; //Save PC value to IF_ID_Register
+	IF_ID.NPC = PC; //Save PC value to IF_ID_Register
 	IF_ID.instr = instruction; //Save PC value to IF_ID_Register
 
 	return IF_ID;
@@ -189,8 +189,6 @@ STAGE_REG ID(STAGE_REG IF_ID)
 
 	return result;
 }
-
-
 
 STAGE_REG EX(STAGE_REG ID_EX)
 {
@@ -832,7 +830,7 @@ int run_bin(int num_instruc, int d_exist, unsigned int* memory_range) {
 		MEM_WB = MEM(EX_MEM);
 		EX_MEM = EX(ID_EX);
 		ID_EX = ID(IF_ID);
-		IF_ID = IF(PC);
+		IF_ID = IF();
 		// something PC error between here
 		if (d_exist) {
 			print_reg(&PC, reg);
@@ -904,11 +902,6 @@ int main(int argc, char *argv[], char *envp[]) {
 			print_mem(mem, memory_range[0], memory_range[1]); //print_mem(reinterpret_cast<unsigned char*>(mem), start, end);
 		}
 	}
-
-
-
 	free(mem);
-
-	
 	return 0;
 }
