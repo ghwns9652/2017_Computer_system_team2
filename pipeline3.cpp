@@ -82,10 +82,10 @@ int ALU_controller(int ALUOp, int funct) {
 	}
 }
 
-STAGE_REG IF(void) //PC¸¦ ÀÎÀÚ·Î ÁÖ¸é PC°ªÀÌ º¯°æµÇÁö ¾Ê´Â ¹®Á¦Á¡ÀÌ ÀÖ¾ú´Ù!
+STAGE_REG IF(void) //PCë¥¼ ì¸ìë¡œ ì£¼ë©´ PCê°’ì´ ë³€ê²½ë˜ì§€ ì•ŠëŠ” ë¬¸ì œì ì´ ìˆì—ˆë‹¤!
 {
 	struct STAGE_REG IF_ID;
-	// ¸Ş¸ğ¸®¿¡¼­ ¸í··¾î ÀĞ¾î¿À±â
+	// ë©”ëª¨ë¦¬ì—ì„œ ëª…ë ì–´ ì½ì–´ì˜¤ê¸°
 	string instruction;
 	//instruction = print_bin(read_mem(PC), 32); // take instruction from memory
 
@@ -248,7 +248,7 @@ STAGE_REG EX(STAGE_REG ID_EX)
 		result.ALU_OUT = ID_EX.DATA1 + ID_EX.DATA2;	//add
 	}
 	else if (ALU_ctrl == 6) {
-		result.ALU_OUT = ID_EX.DATA1 - ID_EX.DATA2;	//sub ÀÌ·¸°Ô »©´Â°Å ¸Â³ª ????
+		result.ALU_OUT = ID_EX.DATA1 - ID_EX.DATA2;	//sub ì´ë ‡ê²Œ ë¹¼ëŠ”ê±° ë§ë‚˜ ????
 	}
 	else if (ALU_ctrl == 7) {
 		result.ALU_OUT = int(ID_EX.DATA1 < ID_EX.DATA2);	//set-on-less-than
@@ -337,7 +337,7 @@ STAGE_REG EX(STAGE_REG ID_EX)
 		}
 	}*/
 
-	// result¿¡ Àü´ŞÇØ¼­ ¸®ÅÏ
+	// resultì— ì „ë‹¬í•´ì„œ ë¦¬í„´
 
 }
 
