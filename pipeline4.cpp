@@ -9,7 +9,7 @@
 using namespace std;
 
 
-//global variables
+//global variable
 int reg[32];
 size_t s = sizeof(char) * 4 * 1024 * 1024 * 1024;
 unsigned char *mem = (unsigned char *)malloc(s);
