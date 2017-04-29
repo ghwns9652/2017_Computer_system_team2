@@ -1116,16 +1116,16 @@ void stage_control()
 			stage_state[i] = 1;
 	}
 
-	//끌때 IF 처리
-	if (PC == (0x400000 + text_size))
-		stage_state[0] = 0;
-
 	//각 스테이지 순차적으로 종료
 	for (int i = 4; i > 0; i--)
 	{
 		if (stage_state[i - 1] == 0)
 			stage_state[i] = 0;
 	}
+
+	//끌때 IF 처리
+	if (PC == (0x400000 + text_size))
+		stage_state[0] = 0;
 }
 
 int run_bin(int num_instruc, int d_exist, unsigned int* memory_range) {
@@ -1188,21 +1188,33 @@ int run_bin(int num_instruc, int d_exist, unsigned int* memory_range) {
 		stage_control();
 
 		if (stage_state[4] == 1) {
-			AFTER_WB = WB(MEM_WB);
+			WB(MEM_WB);
 		}
 		if (stage_state[3] == 1) {
 			EX_MEM = Forward_Unit_to_MEM(EX_MEM, MEM_WB);
 			MEM_WB = MEM(EX_MEM);
 		}
+		else {
+			MEM_WB = STAGE_REG();
+		}
 		if (stage_state[2] == 1) {
 			ID_EX = Forward_Unit_to_EX(ID_EX, EX_MEM, MEM_WB);
 			EX_MEM = EX(ID_EX);
 		}
+		else {
+			EX_MEM = STAGE_REG();
+		}
 		if (stage_state[1] == 1) {
 			ID_EX = ID(IF_ID);
 		}
+		else {
+			ID_EX = STAGE_REG();
+		}
 		if (stage_state[0] == 1) {
 			IF_ID = IF();
+		}
+		else {
+			IF_ID = STAGE_REG();
 		}
 
 		if (MEM_WB.flush == 3) {	
@@ -1241,7 +1253,7 @@ int run_bin(int num_instruc, int d_exist, unsigned int* memory_range) {
 		//print 함수
 		if (d_exist) {
 			if (!(0x400000 <= PC && PC < (0x400000 + text_size))) {
-				PC = PC_temp;
+				//PC = PC_temp;
 			}
 			print_pipe(loop_count, IF_ID, ID_EX, EX_MEM, MEM_WB, AFTER_WB);
 			print_reg(&PC, reg);
