@@ -735,7 +735,7 @@ void Load_Noop(STAGE_REG IF_ID, STAGE_REG ID_EX)
 	string ins = IF_ID.instr;
 	int REG1 = convert210(ins.substr(6, 5));
 	int REG2 = convert210(ins.substr(11, 5));
-	if ( (ID_EX.mem_rd == 1) && ((ID_EX.REG2 == REG1) || (ID_EX.REG2 == REG2)) )
+	if ((ID_EX.mem_rd == 1) && ((ID_EX.REG2 == REG1) || (ID_EX.REG2 == REG2)))
 	{
 		ID_EX.flush = -1;
 	}
@@ -979,7 +979,7 @@ STAGE_REG EX(STAGE_REG ID_EX)
 	else if (ALU_ctrl == 12) {
 		result.ALU_OUT = ~(ID_EX.DATA1 | ID_EX.DATA2);	//nor
 	}
-	
+
 	// rd 대입
 	if (result.Regdst == 0) {
 		result.rd = result.REG3;
@@ -987,7 +987,7 @@ STAGE_REG EX(STAGE_REG ID_EX)
 	else if (result.Regdst == 1) {
 		result.rd = result.REG2;
 	}
-	
+
 	return result;
 }
 
@@ -1068,8 +1068,8 @@ void stage_control()
 	//각 스테이지 순차적으로 실행
 	for (int i = 4; i > 0; i--)
 	{
-		if (stage_state[i-1] == 1)
-			stage_state[i] == 1;
+		if (stage_state[i - 1] == 1)
+			stage_state[i] = 1;
 	}
 
 	//끌때 IF 처리
@@ -1080,7 +1080,7 @@ void stage_control()
 	for (int i = 4; i > 0; i--)
 	{
 		if (stage_state[i - 1] == 0)
-			stage_state[i] == 0;
+			stage_state[i] = 0;
 	}
 }
 
@@ -1141,7 +1141,7 @@ int run_bin(int num_instruc, int d_exist, unsigned int* memory_range) {
 		// 각 스테이지를 컨트롤 해서 실행
 		stage_control();
 
-		if (stage_state[4] == 1){
+		if (stage_state[4] == 1) {
 			WB(MEM_WB);
 		}
 		if (stage_state[3] == 1) {
@@ -1158,9 +1158,9 @@ int run_bin(int num_instruc, int d_exist, unsigned int* memory_range) {
 		if (stage_state[0] == 1) {
 			IF_ID = IF();
 		}
+
 		
-		Load_Noop(IF_ID, ID_EX); // check noop stall
-		
+
 		if (MEM_WB.flush == 3) {
 			EX_MEM = STAGE_REG();
 			ID_EX = STAGE_REG();
@@ -1177,8 +1177,9 @@ int run_bin(int num_instruc, int d_exist, unsigned int* memory_range) {
 				stage_state[0] = 1;
 			}
 		}
-		
+
 		//noop stall
+		Load_Noop(IF_ID, ID_EX); // check noop stall
 		if (stage_state[0] == -1) {
 			ID_EX = STAGE_REG();
 			stage_state[0] = 1;
@@ -1186,8 +1187,8 @@ int run_bin(int num_instruc, int d_exist, unsigned int* memory_range) {
 		if (ID_EX.flush == -1) {
 			stage_state[0] = -1;
 		}
-		
-		
+
+
 		/*bin_parser(str_line);*/
 		if (d_exist) {
 			if (!(0x400000 <= PC && PC < (0x400000 + text_size))) {
