@@ -18,7 +18,7 @@ unsigned int PC_temp = 0;
 unsigned int EOM = 0; // end of main
 int END_warn = 0;
 int text_size = 0;
-int All_take = 0;
+int All_taken = 0;
 
 
 string print_bin(unsigned int num, int len) {
