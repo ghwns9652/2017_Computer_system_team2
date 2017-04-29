@@ -1041,6 +1041,31 @@ struct STAGE_REG Forward_Unit_to_MEM(STAGE_REG EX_MEM, STAGE_REG MEM_WB)
 	return EX_MEM;
 }
 
+void stage_control()
+{
+	//처음 IF 실행
+	if (PC == 0x400000 && stage_state[0] == 0)
+		stage_state[0] = 1;
+
+	//각 스테이지 순차적으로 실행
+	for (int i = 4; i > 0; i--)
+	{
+		if (stage_state[i-1] == 1)
+			stage_state[i] == 1;
+	}
+
+	//끌때 IF 처리
+	if (PC == (0x400000 + text_size))
+		stage_state[0] = 0;
+
+	//각 스테이지 순차적으로 종료
+	for (int i = 4; i > 0; i--)
+	{
+		if (stage_state[i - 1] == 0)
+			stage_state[i] == 0;
+	}
+}
+
 int run_bin(int num_instruc, int d_exist, unsigned int* memory_range) {
 	//initialize
 
@@ -1129,31 +1154,6 @@ int run_bin(int num_instruc, int d_exist, unsigned int* memory_range) {
 		loop_count += 1;
 	}
 	return 0;
-}
-
-void stage_control()
-{
-	//처음 IF 실행
-	if (PC == 0x400000 && stage_state[0] == 0)
-		stage_state[0] = 1;
-
-	//각 스테이지 순차적으로 실행
-	for (int i = 4; i > 0; i--)
-	{
-		if (stage_state[i-1] == 1)
-			stage_state[i] == 1;
-	}
-
-	//끌때 IF 처리
-	if (PC == (0x400000 + text_size))
-		stage_state[0] = 0;
-
-	//각 스테이지 순차적으로 종료
-	for (int i = 4; i > 0; i--)
-	{
-		if (stage_state[i - 1] == 0)
-			stage_state[i] == 0;
-	}
 }
 
 //end
