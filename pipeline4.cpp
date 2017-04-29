@@ -966,14 +966,18 @@ STAGE_REG EX(STAGE_REG ID_EX)
 	else if (ALU_ctrl == 12) {
 		result.ALU_OUT = ~(ID_EX.DATA1 | ID_EX.DATA2);	//nor
 	}
-
+	
+	// rd 대입
 	if (ID_EX.Regdst == 0) {
 		result.rd = ID_EX.REG3;
 	}
 	else if (ID_EX.Regdst == 1) {
 		result.rd = ID_EX.REG2;
 	}
-
+	
+	//forwarding
+	result.Regdst = ID_EX.Regdst;
+	
 	return result;
 
 	/*if (ID_EX.ALUOp == 2) {
@@ -1063,6 +1067,9 @@ STAGE_REG MEM(STAGE_REG EX_MEM)
 		}
 	}
 	
+	//forwarding
+	result.Regdst = EX_MEM.Regdst;
+	
 	return result;
 }
 
@@ -1083,13 +1090,13 @@ struct STAGE_REG Forward_Unit_to_EX(STAGE_REG ID_EX ,STAGE_REG EX_MEM, STAGE_REG
 	//EX_MEM to EX
 	if (EX_MEM.reg_wt && (EX_MEM.rd != 0) && (EX_MEM.rd == ID_EX.REG1))
 		ID_EX.DATA1 = EX_MEM.ALU_OUT;
-	if (EX_MEM.reg_wt && (EX_MEM.rd != 0) && (EX_MEM.rd == ID_EX.REG2))
+	if (EX_MEM.reg_wt && (EX_MEM.rd != 0) && (ID_EX.Regdst != 1) && (EX_MEM.rd == ID_EX.REG2))
 		ID_EX.DATA2 = EX_MEM.ALU_OUT;
 	
 	//MEM_WB to EX
 	if (MEM_WB.reg_wt && (MEM_WB.rd != 0) && (EX_MEM.rd != ID_EX.REG1) && (MEM_WB.rd == ID_EX.REG1))
 		ID_EX.DATA1 = MEM_WB.ALU_OUT;
-	if (MEM_WB.reg_wt && (MEM_WB.rd != 0) && (EX_MEM.rd != ID_EX.REG2) && (MEM_WB.rd == ID_EX.REG2))
+	if (MEM_WB.reg_wt && (MEM_WB.rd != 0) && (ID_EX.Regdst != 1) && (EX_MEM.rd != ID_EX.REG2) && (MEM_WB.rd == ID_EX.REG2))
 		ID_EX.DATA2 = MEM_WB.ALU_OUT;
 
 	return ID_EX;
@@ -1098,7 +1105,7 @@ struct STAGE_REG Forward_Unit_to_EX(STAGE_REG ID_EX ,STAGE_REG EX_MEM, STAGE_REG
 struct STAGE_REG Forward_Unit_to_MEM(STAGE_REG EX_MEM, STAGE_REG MEM_WB)
 {
 	//MEM_WB to MEM
-	if (MEM_WB.reg_wt && (MEM_WB.rd != 0) && (MEM_WB.rd == EX_MEM.REG2))
+	if (MEM_WB.reg_wt && (MEM_WB.rd != 0) && (ID_EX.Regdst != 1) && (MEM_WB.rd == EX_MEM.REG2))
 		EX_MEM.DATA2 = MEM_WB.ALU_OUT;
 
 	return EX_MEM;
