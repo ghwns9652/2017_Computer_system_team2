@@ -923,7 +923,7 @@ STAGE_REG ID(STAGE_REG IF_ID)
 			PC = reg[31];
 			result.ALUOp = 1;
 		}
-		result.stall_sign = 1; // flush 1 cycle sign
+		result.flush = 1; // flush 1 cycle sign
 	}
 
 	return result;
