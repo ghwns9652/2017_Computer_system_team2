@@ -1153,7 +1153,7 @@ int run_bin(int num_instruc, int d_exist, unsigned int* memory_range) {
 	//cout << text_size_ptr << endl;
 	//read instruction from memory
 	//for (int line = 0; line < text_size_ptr; line ++)
-	while (0x400000 <= PC && PC < (0x400000 + text_size_ptr))
+	while (0x400000 <= PC && PC < (0x400000 + text_size_ptr + 4))
 	{
 		if ((loop_count >= num_instruc) & (num_instruc != -1))
 			break;
