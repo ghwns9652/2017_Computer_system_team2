@@ -794,7 +794,7 @@ STAGE_REG IF(void) //PC를 인자로 주면 PC값이 변경되지 않는 문제�
 
 STAGE_REG ID(STAGE_REG IF_ID)
 {
-	STAGE_REG result;
+	STAGE_REG result = IF_ID;
 
 	string ins = IF_ID.instr;
 	int opcode = convert210(ins.substr(0, 6));
@@ -817,7 +817,8 @@ STAGE_REG ID(STAGE_REG IF_ID)
 	//always
 	result.DATA1 = reg[convert210(ins.substr(6, 5))];
 	result.DATA2 = reg[convert210(ins.substr(11, 5))];
-	result.REG2 = convert210(ins.substr(11, 5)); //i didn't used REG1
+	result.REG1 = convert210(ins.substr(6, 5));
+	result.REG2 = convert210(ins.substr(11, 5)); //i didn't used REG1 <- i will kill you
 	result.REG3 = convert210(ins.substr(16, 5)); // either REG2 or REG3 become REG destination at EX stage
 	result.shift = convert210(ins.substr(21, 5));
 	result.funct = convert210(ins.substr(26, 6));
@@ -926,14 +927,6 @@ STAGE_REG ID(STAGE_REG IF_ID)
 		result.flush = 1; // flush 1 cycle sign
 	}
 
-	// rd 대입
-	if (result.Regdst == 0) {
-		result.rd = result.REG3;
-	}
-	else if (result.Regdst == 1) {
-		result.rd = result.REG2;
-	}
-
 	return result;
 }
 
@@ -974,75 +967,16 @@ STAGE_REG EX(STAGE_REG ID_EX)
 	else if (ALU_ctrl == 12) {
 		result.ALU_OUT = ~(ID_EX.DATA1 | ID_EX.DATA2);	//nor
 	}
-
 	
-
+	// rd 대입
+	if (result.Regdst == 0) {
+		result.rd = result.REG3;
+	}
+	else if (result.Regdst == 1) {
+		result.rd = result.REG2;
+	}
+	
 	return result;
-
-	/*if (ID_EX.ALUOp == 2) {
-	if (ID_EX.funct == 0x21) //ADDU (2)
-	{
-	result.ALU_OUT = ID_EX.DATA1 + ID_EX.DATA2;
-	}
-	else if (ID_EX.funct == 0x24) //AND (3)
-	{
-	result.ALU_OUT = ID_EX.DATA1 & ID_EX.DATA2;
-	}
-	else if (ID_EX.funct == 0x27) //12 nor
-	{
-	result.ALU_OUT = (~(ID_EX.DATA1 | ID_EX.DATA2));
-	}
-	else if (ID_EX.funct == 0x25) //13 or
-	{
-	result.ALU_OUT = (ID_EX.DATA1 | ID_EX.DATA2);
-	}
-	else if (ID_EX.funct == 0x2b) //16 sltu
-	{
-	result.ALU_OUT = (ID_EX.DATA1 < ID_EX.DATA2 ? 1 : 0);
-	}
-	else if (ID_EX.funct == 0) //17 sll
-	{
-	result.ALU_OUT = ID_EX.DATA2 << ID_EX.shift;
-	}
-	else if (ID_EX.funct == 2) //18 srl
-	{
-	result.ALU_OUT = ID_EX.DATA2 >> ID_EX.shift;
-	}
-	else if (ID_EX.funct == 0x23) //20 subu
-	{
-	result.ALU_OUT = ID_EX.DATA1 - ID_EX.DATA2;
-	}
-	}
-
-	//////// I type
-	if (ID_EX.opcode == 9) //ADDIU (1)
-	{
-	result.ALU_OUT = ID_EX.DATA1 + ID_EX.IMM;
-	}
-	else if (ID_EX.opcode == 0xc) //ANDI (4)
-	{
-	result.ALU_OUT = ID_EX.DATA1 & ID_EX.IMM;
-	}
-	else if (ID_EX.opcode == 0xf) //LUI (10)
-	{
-	result.ALU_OUT = ID_EX.IMM << 16;
-	}
-	else if (ID_EX.opcode == 0xd) //14 ori
-	{
-	result.ALU_OUT = (ID_EX.DATA1 | ID_EX.IMM);
-	}
-	else if (ID_EX.opcode == 0xb) //15 sltiu
-	{
-	if (ID_EX.DATA1 < ID_EX.IMM) {
-	result.ALU_OUT = 1;
-	}
-	else {
-	result.ALU_OUT = 0;
-	}
-	}*/
-
-	// result에 전달해서 리턴
-
 }
 
 STAGE_REG MEM(STAGE_REG EX_MEM)
