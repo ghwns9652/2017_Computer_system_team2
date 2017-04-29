@@ -733,11 +733,26 @@ struct STAGE_REG
 void Load_Noop(STAGE_REG IF_ID, STAGE_REG ID_EX)
 {
 	string ins = IF_ID.instr;
+	int op = convert210(ins.substr(0, 6));
 	int REG1 = convert210(ins.substr(6, 5));
 	int REG2 = convert210(ins.substr(11, 5));
-	if ((ID_EX.mem_rd == 1) && ((ID_EX.REG2 == REG1) || (ID_EX.REG2 == REG2)))
-	{
-		ID_EX.flush = -1;
+	int funct = convert210(ins.substr(26, 6));
+	
+	// REG2 = rd인 경우와 REG3 = rd인 경우 처리 + 없는 경우
+	if ((op == 2) || (op == 3)) { // J type
+		//공백 flush에서 J type은 처리함.
+	}
+	else if ((op == 0) && (funct == 8)) { // JR
+		if ((ID_EX.mem_rd == 1) && (ID_EX.REG2 == REG1))
+			ID_EX.flush = -1;
+	}
+	else if ((op == 0) || (op == 4) || (op == 5) || (op == 0x2b)) { //R type + I type 양쪽 다 쓰는경우(bne, beq, sw)
+		if ((ID_EX.mem_rd == 1) && ((ID_EX.REG2 == REG1) || (ID_EX.REG2 == REG2)))
+			ID_EX.flush = -1;
+	}
+	else {
+		if ((ID_EX.mem_rd == 1) && (ID_EX.REG2 == REG1))
+			ID_EX.flush = -1;
 	}
 }
 
