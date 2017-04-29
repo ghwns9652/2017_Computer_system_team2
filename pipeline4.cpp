@@ -1061,6 +1061,32 @@ void WB(STAGE_REG MEM_WB)
 	}
 }
 
+struct STAGE_REG Forward_Unit_to_EX(STAGE_REG ID_EX ,STAGE_REG EX_MEM, STAGE_REG MEM_WB)
+{
+	//EX_MEM to EX
+	if (EX_MEM.reg_wt && (EX_MEM.rd != 0) && (EX_MEM.rd == ID_EX.REG1))
+		ID_EX.DATA1 = EX_MEM.ALU_OUT;
+	if (EX_MEM.reg_wt && (EX_MEM.rd != 0) && (EX_MEM.rd == ID_EX.REG2))
+		ID_EX.DATA2 = EX_MEM.ALU_OUT;
+	
+	//MEM_WB to EX
+	if (MEM_WB.reg_wt && (MEM_WB.rd != 0) && (EX_MEM.rd != ID_EX.REG1) && (MEM_WB.rd == ID_EX.REG1))
+		ID_EX.DATA1 = MEM_WB.ALU_OUT;
+	if (MEM_WB.reg_wt && (MEM_WB.rd != 0) && (EX_MEM.rd != ID_EX.REG2) && (MEM_WB.rd == ID_EX.REG2))
+		ID_EX.DATA2 = MEM_WB.ALU_OUT;
+
+	return ID_EX;
+}
+
+struct STAGE_REG Forward_Unit_to_MEM(STAGE_REG EX_MEM, STAGE_REG MEM_WB)
+{
+	//MEM_WB to MEM
+	if (MEM_WB.reg_wt && (MEM_WB.rd != 0) && (MEM_WB.rd == EX_MEM.REG2))
+		EX_MEM.DATA2 = MEM_WB.ALU_OUT;
+
+	return EX_MEM;
+}
+
 int run_bin(int num_instruc, int d_exist, unsigned int* memory_range) {
 	//initialize
 
@@ -1116,7 +1142,9 @@ int run_bin(int num_instruc, int d_exist, unsigned int* memory_range) {
 		}*/
 		
 		WB(MEM_WB);
+		EX_MEM = Forward_Unit_to_MEM(EX_MEM, MEM_WB);
 		MEM_WB = MEM(EX_MEM);
+		ID_EX = Forward_Unit_to_EX(ID_EX, EX_MEM, MEM_WB);
 		EX_MEM = EX(ID_EX);
 		ID_EX = ID(IF_ID);
 		IF_ID = IF();
