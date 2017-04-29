@@ -1046,7 +1046,7 @@ STAGE_REG MEM(STAGE_REG EX_MEM)
 	return result;
 }
 
-void WB(STAGE_REG MEM_WB)
+struct STAGE_REG WB(STAGE_REG MEM_WB)
 {
 	if (MEM_WB.reg_wt == 1 && MEM_WB.mem2reg == 1) {
 		reg[MEM_WB.rd] = MEM_WB.reg_data;
@@ -1056,6 +1056,7 @@ void WB(STAGE_REG MEM_WB)
 	if (MEM_WB.reg_wt == 1 && MEM_WB.mem2reg == 0) {
 		reg[MEM_WB.rd] = MEM_WB.ALU_OUT;
 	}
+	return MEM_WB;
 }
 
 struct STAGE_REG Forward_Unit_to_EX(STAGE_REG ID_EX, STAGE_REG EX_MEM, STAGE_REG MEM_WB)
@@ -1128,6 +1129,7 @@ int run_bin(int num_instruc, int d_exist, unsigned int* memory_range) {
 	struct STAGE_REG ID_EX;
 	struct STAGE_REG EX_MEM;
 	struct STAGE_REG MEM_WB;
+	struct STAGE_REG AFTER_WB;
 
 	//save instruction in memory
 	int text_size_ptr = 0;
@@ -1184,7 +1186,7 @@ int run_bin(int num_instruc, int d_exist, unsigned int* memory_range) {
 		stage_control();
 
 		if (stage_state[4] == 1) {
-			WB(MEM_WB);
+			AFTER_WB = WB(MEM_WB);
 		}
 		if (stage_state[3] == 1) {
 			EX_MEM = Forward_Unit_to_MEM(EX_MEM, MEM_WB);
