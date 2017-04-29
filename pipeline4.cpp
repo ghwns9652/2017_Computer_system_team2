@@ -836,9 +836,10 @@ STAGE_REG ID(STAGE_REG IF_ID)
 			result.ALUSrc = 0;
 			result.ALUOp = 1;
 			
+
 			//Branch Always taken
-			if (All_take == 1) {
-				PC = IF_ID.NPC + IMM * 4;
+			if (All_taken == 1) {
+				PC = IF_ID.NPC + result.IMM * 4;
 				IF_ID.flush = 1;
 			}
 		}
