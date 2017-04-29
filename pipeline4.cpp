@@ -1183,17 +1183,7 @@ int run_bin(int num_instruc, int d_exist, unsigned int* memory_range) {
 		PC += 4;
 		}*/
 
-		//print 함수
-		if (d_exist) {
-			if (!(0x400000 <= PC && PC < (0x400000 + text_size))) {
-				PC = PC_temp;
-			}
-			print_pipe(loop_count, IF_ID, ID_EX, EX_MEM, MEM_WB);
-			print_reg(&PC, reg);
-			if (memory_range[2] != 0) {
-				print_mem(mem, memory_range[0], memory_range[1]);  //print_mem(reinterpret_cast<unsigned char*>(mem), start, end);
-			}
-		}
+
 		// 각 스테이지를 컨트롤 해서 실행
 		stage_control();
 
@@ -1248,13 +1238,25 @@ int run_bin(int num_instruc, int d_exist, unsigned int* memory_range) {
 		/*bin_parser(str_line);*/
 
 		loop_count += 1;
+		//print 함수
+		if (d_exist) {
+			if (!(0x400000 <= PC && PC < (0x400000 + text_size))) {
+				PC = PC_temp;
+			}
+			print_pipe(loop_count, IF_ID, ID_EX, EX_MEM, MEM_WB, AFTER_WB);
+			print_reg(&PC, reg);
+			if (memory_range[2] != 0) {
+				print_mem(mem, memory_range[0], memory_range[1]);  //print_mem(reinterpret_cast<unsigned char*>(mem), start, end);
+			}
+		}
+		
 		if (stage_state[0] == 0 && stage_state[4] == 0) {
 			break;
 		}
 	}
 	
-	if (1) {
-		print_pipe(loop_count, IF_ID, ID_EX, EX_MEM, MEM_WB); // need check
+	if (!d_exist) {
+		print_pipe(loop_count, IF_ID, ID_EX, EX_MEM, MEM_WB, AFTER_WB); // need check
 		print_reg(&PC, reg);
 
 		if (memory_range[2] != 0) {
