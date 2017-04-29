@@ -18,6 +18,7 @@ unsigned int PC_temp = 0;
 unsigned int EOM = 0; // end of main
 int END_warn = 0;
 int text_size = 0;
+int All_take = 0;
 
 
 string print_bin(unsigned int num, int len) {
@@ -724,6 +725,7 @@ struct STAGE_REG
 	int DATA1 = 0;
 	int DATA2 = 0;
 	int stall_sign = 0;
+	int flush = 0;
 	int ALUOp = 0;
 };
 
@@ -833,6 +835,12 @@ STAGE_REG ID(STAGE_REG IF_ID)
 			result.branch = 1;
 			result.ALUSrc = 0;
 			result.ALUOp = 1;
+			
+			//Branch Always taken
+			if (All_take == 1) {
+				PC = IF_ID.NPC + IMM * 4;
+				IF_ID.flush = 1;
+			}
 		}
 		else if (opcode == 0x23) { // Load word  -- read only rs and write on rt
 			result.reg_wt = 1;
@@ -1045,7 +1053,15 @@ STAGE_REG MEM(STAGE_REG EX_MEM)
 	}
 
 	result.DATA2 = 0;
-
+	
+	//BRANCH IS HERE!! YEAH!
+	if ((result.ALU_OUT == 0 && EX_MEM.branch == 1) || (result.ALU_OUT != 0 && EX_MEM.branch == 2)) {
+		if (All_taken == 0) {
+			result.flush == 3;
+			PC = EX_MEM.IMM * 4 + EX_MEM.NPC;
+		}
+	}
+	
 	return result;
 }
 
