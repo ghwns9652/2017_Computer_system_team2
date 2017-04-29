@@ -19,7 +19,7 @@ unsigned int EOM = 0; // end of main
 int END_warn = 0;
 int text_size = 0;
 int All_taken = 0;
-
+int stage_state[5] = { 0 };
 
 string print_bin(unsigned int num, int len) {
 	int length = len - 1;
@@ -1095,13 +1095,26 @@ int run_bin(int num_instruc, int d_exist, unsigned int* memory_range) {
 		PC += 4;
 		}*/
 
-		WB(MEM_WB);
-		EX_MEM = Forward_Unit_to_MEM(EX_MEM, MEM_WB);
-		MEM_WB = MEM(EX_MEM);
-		ID_EX = Forward_Unit_to_EX(ID_EX, EX_MEM, MEM_WB);
-		EX_MEM = EX(ID_EX);
-		ID_EX = ID(IF_ID);
-		IF_ID = IF();
+		// 각 스테이지를 컨트롤 해서 실행
+		stage_control();
+
+		if (stage_state[4] = 1){
+			WB(MEM_WB);
+		}
+		if (stage_state[3] = 1) {
+			EX_MEM = Forward_Unit_to_MEM(EX_MEM, MEM_WB);
+			MEM_WB = MEM(EX_MEM);
+		}
+		if (stage_state[2] = 1) {
+			ID_EX = Forward_Unit_to_EX(ID_EX, EX_MEM, MEM_WB);
+			EX_MEM = EX(ID_EX);
+		}
+		if (stage_state[1] = 1) {
+			ID_EX = ID(IF_ID);
+		}
+		if (stage_state[0] = 1) {
+			IF_ID = IF();
+		}
 
 		/*bin_parser(str_line);*/
 		if (d_exist) {
@@ -1118,6 +1131,30 @@ int run_bin(int num_instruc, int d_exist, unsigned int* memory_range) {
 	return 0;
 }
 
+void stage_control()
+{
+	//처음 IF 실행
+	if (PC == 0x400000 && stage_state[0] == 0)
+		stage_state[0] = 1;
+
+	//각 스테이지 순차적으로 실행
+	for (int i = 4; i > 0; i--)
+	{
+		if (stage_state[i-1] == 1)
+			stage_state[i] == 1;
+	}
+
+	//끌때 IF 처리
+	if (PC == (0x400000 + text_size))
+		stage_state[0] = 0;
+
+	//각 스테이지 순차적으로 종료
+	for (int i = 4; i > 0; i--)
+	{
+		if (stage_state[i - 1] == 0)
+			stage_state[i] == 0;
+	}
+}
 
 //end
 
