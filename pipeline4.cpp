@@ -746,7 +746,7 @@ void print_pipe(int cycle, STAGE_REG IF_ID, STAGE_REG ID_EX, STAGE_REG EX_MEM, S
 		if (pipe_PCs[i] == 0) // empty 
 			printf("        |");
 		else
-			printf("0x%08x|", pipe_PCs[i]-4);
+			printf("0x%08x|", pipe_PCs[i] - 4);
 	}
 	//printf("0x%08x|0x%08x|0x%08x|0x%08x|0x%08x", pipe_PCs[0], pipe_PCs[1], pipe_PCs[2], pipe_PCs[3], pipe_PCs[4] - 4);
 	cout << endl;
@@ -759,10 +759,10 @@ void Load_Noop(STAGE_REG IF_ID, STAGE_REG ID_EX)
 	int REG1 = convert210(ins.substr(6, 5));
 	int REG2 = convert210(ins.substr(11, 5));
 	int funct = convert210(ins.substr(26, 6));
-	
+
 	// REG2 = rd인 경우와 REG3 = rd인 경우 처리 + 없는 경우
 	if ((op == 2) || (op == 3)) { // J type
-		//공백 flush에서 J type은 처리함.
+								  //공백 flush에서 J type은 처리함.
 	}
 	else if ((op == 0) && (funct == 8)) { // JR
 		if ((ID_EX.mem_rd == 1) && (ID_EX.REG2 == REG1))
@@ -1187,6 +1187,10 @@ int run_bin(int num_instruc, int d_exist, unsigned int* memory_range) {
 		// 각 스테이지를 컨트롤 해서 실행
 		stage_control();
 
+		if (stage_state[0] == 0 && stage_state[1] == 0 && stage_state[2] == 0 && stage_state[3] == 0 && stage_state[4] == 0) {
+			break;
+		}
+
 		if (stage_state[4] == 1) {
 			AFTER_WB = WB(MEM_WB);
 		}
@@ -1217,7 +1221,7 @@ int run_bin(int num_instruc, int d_exist, unsigned int* memory_range) {
 			IF_ID = STAGE_REG();
 		}
 
-		if (MEM_WB.flush == 3) {	
+		if (MEM_WB.flush == 3) {
 			EX_MEM = STAGE_REG();
 			ID_EX = STAGE_REG();
 			IF_ID = STAGE_REG();
@@ -1261,12 +1265,11 @@ int run_bin(int num_instruc, int d_exist, unsigned int* memory_range) {
 				print_mem(mem, memory_range[0], memory_range[1]);  //print_mem(reinterpret_cast<unsigned char*>(mem), start, end);
 			}
 		}
+		cout << "!" << endl;
 		
-		if (stage_state[0] == 0 && stage_state[1] == 0 && stage_state[2] == 0 && stage_state[3] == 0 && stage_state[4] == 0) {
-			break;
-		}
+		
 	}
-	
+
 	if (!d_exist || num_instruc == 0) {
 		print_pipe(loop_count, IF_ID, ID_EX, EX_MEM, MEM_WB, AFTER_WB); // need check
 		print_reg(&PC, reg);
@@ -1275,7 +1278,7 @@ int run_bin(int num_instruc, int d_exist, unsigned int* memory_range) {
 			print_mem(mem, memory_range[0], memory_range[1]); //print_mem(reinterpret_cast<unsigned char*>(mem), start, end);
 		}
 	}
-	
+
 	return 0;
 }
 
@@ -1335,15 +1338,15 @@ int main(int argc, char *argv[], char *envp[]) {
 	run_bin(num_instruc, d_exist, memory_range);
 	/*
 	if (!(d_exist) || num_instruc == 0) {
-		if (!(0x400000 <= PC && PC < (0x400000 + text_size))) {
-			//PC = PC_temp;
-		}
+	if (!(0x400000 <= PC && PC < (0x400000 + text_size))) {
+	//PC = PC_temp;
+	}
 
-		print_reg(&PC, reg);
+	print_reg(&PC, reg);
 
-		if (memory_range[2] != 0) {
-			print_mem(mem, memory_range[0], memory_range[1]); //print_mem(reinterpret_cast<unsigned char*>(mem), start, end);
-		}
+	if (memory_range[2] != 0) {
+	print_mem(mem, memory_range[0], memory_range[1]); //print_mem(reinterpret_cast<unsigned char*>(mem), start, end);
+	}
 	}*/
 
 	free(mem);
