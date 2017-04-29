@@ -1136,6 +1136,8 @@ int run_bin(int num_instruc, int d_exist, unsigned int* memory_range) {
 		}
 		if (stage_state[1] = 1) {
 			ID_EX = ID(IF_ID);
+			if (stage_state[0] == -1) // give nothing for noop
+				ID_EX = STAGE_REG();
 		}
 		if (stage_state[0] = 1) {
 			IF_ID = IF();
@@ -1157,6 +1159,14 @@ int run_bin(int num_instruc, int d_exist, unsigned int* memory_range) {
 				stage_state[0] = 1;
 			}
 		}
+		
+		//noop stall
+		if (stage_state[0] == -1)
+			stage_state[0] = 1;
+		if (ID_EX.flush == -1) {
+			stage_state[0] = -1;
+		}
+		
 		
 		/*bin_parser(str_line);*/
 		if (d_exist) {
