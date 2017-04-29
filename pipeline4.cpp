@@ -686,6 +686,17 @@ void create_bin(string file_name) {
 	//end of file 02
 }
 
+void Load_Noop(STAGE_REG IF_ID, STAGE_REG ID_EX)
+{
+	string ins = IF_ID.instr;
+	int REG1 = convert210(ins.substr(6, 5));
+	int REG2 = convert210(ins.substr(11, 5));
+	if ( (ID_EX.mem_rd == 1) && ((ID_EX.REG2 == REG1) || (ID_EX.REG2 == REG2)) )
+	{
+		ID_EX.flush = -1;
+	}
+}
+
 int sign_extend(int bit16) {
 	//it's in the past one
 	int temp = bit16 & 0x00008000;
@@ -1141,6 +1152,7 @@ int run_bin(int num_instruc, int d_exist, unsigned int* memory_range) {
 			EX_MEM = EX(ID_EX);
 		}
 		if (stage_state[1] = 1) {
+			Load_Noop(IF_ID, ID_EX);
 			ID_EX = ID(IF_ID);
 		}
 		if (stage_state[0] = 1) {
