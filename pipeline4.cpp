@@ -1225,7 +1225,7 @@ int run_bin(int num_instruc, int d_exist, unsigned int* memory_range) {
 			if (!(0x400000 <= PC && PC < (0x400000 + text_size))) {
 				PC = PC_temp;
 			}
-			print_pipe(int loop_count, STAGE_REG IF_ID, STAGE_REG ID_EX, STAGE_REG EX_MEM, STAGE_REG MEM_WB)
+			print_pipe(loop_count, IF_ID, ID_EX, EX_MEM, MEM_WB);
 			print_reg(&PC, reg);
 			if (memory_range[2] != 0) {
 				print_mem(mem, memory_range[0], memory_range[1]);  //print_mem(reinterpret_cast<unsigned char*>(mem), start, end);
