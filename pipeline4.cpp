@@ -15,6 +15,7 @@ size_t s = sizeof(char) * 4 * 1024 * 1024 * 1024;
 unsigned char *mem = (unsigned char *)malloc(s);
 unsigned int PC;
 unsigned int PC_temp = 0;
+unsigned int J_PC_temp = 0;
 unsigned int EOM = 0; // end of main
 int END_warn = 0;
 int text_size = 0;
@@ -730,39 +731,14 @@ struct STAGE_REG
 	int ALUOp = 0;
 };
 
-
-void print_pipe(int cycle, STAGE_REG IF_ID, STAGE_REG ID_EX, STAGE_REG EX_MEM, STAGE_REG MEM_WB)
-{
-	cout << "Current pipeline PC state :" << endl;
-	cout << "-----------------------------------------" << endl;
-	cout << "CYCLE " << cycle << ":";
-	cout << hex << PC << "|" <<IF_ID.NPC - 4 << "|" << ID_EX.NPC - 4 <<"|"<< EX_MEM.NPC - 4 <<"|"<< MEM_WB.NPC - 4 << endl;
-	cout << endl;
-}
-
 void Load_Noop(STAGE_REG IF_ID, STAGE_REG ID_EX)
 {
 	string ins = IF_ID.instr;
-	int op = convert210(ins.substr(0, 6));
 	int REG1 = convert210(ins.substr(6, 5));
 	int REG2 = convert210(ins.substr(11, 5));
-	int funct = convert210(ins.substr(26, 6));
-	
-	// REG2 = rd인 경우와 REG3 = rd인 경우 처리 + 없는 경우
-	if ((op == 2) || (op == 3)) { // J type
-		//공백 flush에서 J type은 처리함.
-	}
-	else if ((op == 0) && (funct == 8)) { // JR
-		if ((ID_EX.mem_rd == 1) && (ID_EX.REG2 == REG1))
-			ID_EX.flush = -1;
-	}
-	else if ((op == 0) || (op == 4) || (op == 5) || (op == 0x2b)) { //R type + I type 양쪽 다 쓰는경우(bne, beq, sw)
-		if ((ID_EX.mem_rd == 1) && ((ID_EX.REG2 == REG1) || (ID_EX.REG2 == REG2)))
-			ID_EX.flush = -1;
-	}
-	else {
-		if ((ID_EX.mem_rd == 1) && (ID_EX.REG2 == REG1))
-			ID_EX.flush = -1;
+	if ((ID_EX.mem_rd == 1) && ((ID_EX.REG2 == REG1) || (ID_EX.REG2 == REG2)))
+	{
+		ID_EX.flush = -1;
 	}
 }
 
@@ -825,6 +801,7 @@ STAGE_REG IF(void) //PC를 인자로 주면 PC값이 변경되지 않는 문제�
 	PC = PC + 4;
 	IF_ID.NPC = PC; //Save PC value to IF_ID_Register
 	IF_ID.instr = instruction; //Save PC value to IF_ID_Register
+	cout << instruction << endl;
 
 	return IF_ID;
 }
@@ -949,12 +926,13 @@ STAGE_REG ID(STAGE_REG IF_ID)
 	//For JUMP
 	if (result.jump == 1) {
 		if (opcode == 0x2) { //J code
-			PC = convert210(ins.substr(6, 26)) << 2;
+			J_PC_temp = (PC & 0xF0000000) + ((convert210(ins.substr(6, 26))) << 2);
+			cout << PC << endl;
 			result.ALUOp = 1;
 		}
 		else if (opcode == 0x3) { //JAL code
 			reg[31] = IF_ID.NPC;
-			PC = convert210(ins.substr(6, 26)) << 2;
+			J_PC_temp = (PC & 0xF0000000) + ((convert210(ins.substr(6, 26))) << 2);
 			result.ALUOp = 1;
 		}
 		else if (opcode == 0) {	//JR code
@@ -1034,6 +1012,12 @@ STAGE_REG MEM(STAGE_REG EX_MEM)
 		if (All_taken == 0) {
 			result.flush = 3;
 			PC = EX_MEM.IMM * 4 + EX_MEM.NPC;
+		}
+	}
+	else {
+		if (All_taken == 1) {
+			PC = result.NPC;
+			result.flush = 3;
 		}
 	}
 
@@ -1184,9 +1168,7 @@ int run_bin(int num_instruc, int d_exist, unsigned int* memory_range) {
 			IF_ID = IF();
 		}
 
-		
-
-		if (MEM_WB.flush == 3) {
+		if (MEM_WB.flush == 3) {	
 			EX_MEM = STAGE_REG();
 			ID_EX = STAGE_REG();
 			IF_ID = STAGE_REG();
@@ -1196,8 +1178,12 @@ int run_bin(int num_instruc, int d_exist, unsigned int* memory_range) {
 				stage_state[2] = 1;
 			}
 		}
+
 		if (ID_EX.flush == 1) {
+			if (ID_EX.jump == 1)
+				PC = J_PC_temp;
 			IF_ID = STAGE_REG();
+			cout << "stall" << endl;
 			if (ID_EX.NPC - 4 == 0x400000 + text_size) {
 				stage_state[0] = 1;
 			}
@@ -1213,25 +1199,17 @@ int run_bin(int num_instruc, int d_exist, unsigned int* memory_range) {
 			stage_state[0] = -1;
 		}
 
-
 		/*bin_parser(str_line);*/
 		if (d_exist) {
-			print_pipe(loop_count, IF_ID, ID_EX, EX_MEM, MEM_WB); // need check
+			if (!(0x400000 <= PC && PC < (0x400000 + text_size))) {
+				PC = PC_temp;
+			}
 			print_reg(&PC, reg);
 			if (memory_range[2] != 0) {
 				print_mem(mem, memory_range[0], memory_range[1]);  //print_mem(reinterpret_cast<unsigned char*>(mem), start, end);
 			}
 		}
 		loop_count += 1;
-	}
-	
-	if (!(d_exist) || num_instruc == 0) {
-		print_pipe(loop_count, IF_ID, ID_EX, EX_MEM, MEM_WB); // need check
-		print_reg(&PC, reg);
-
-		if (memory_range[2] != 0) {
-			print_mem(mem, memory_range[0], memory_range[1]); //print_mem(reinterpret_cast<unsigned char*>(mem), start, end);
-		}
 	}
 	return 0;
 }
