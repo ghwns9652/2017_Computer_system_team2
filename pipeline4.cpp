@@ -1029,6 +1029,12 @@ struct STAGE_REG Forward_Unit_to_EX(STAGE_REG ID_EX, STAGE_REG EX_MEM, STAGE_REG
 	if (MEM_WB.reg_wt && (MEM_WB.rd != 0) && (EX_MEM.rd != ID_EX.REG2) && (MEM_WB.rd == ID_EX.REG2))
 		ID_EX.DATA2 = MEM_WB.ALU_OUT;
 
+	//MEM_WB to EX - load
+	if (MEM_WB.reg_wt && (MEM_WB.rd != 0) && (EX_MEM.rd != ID_EX.REG1) && (MEM_WB.rd == ID_EX.REG1))
+		ID_EX.DATA1 = MEM_WB.reg_data;
+	if (MEM_WB.reg_wt && (MEM_WB.rd != 0) && (EX_MEM.rd != ID_EX.REG2) && (MEM_WB.rd == ID_EX.REG2))
+		ID_EX.DATA2 = MEM_WB.reg_data;
+
 	return ID_EX;
 }
 
