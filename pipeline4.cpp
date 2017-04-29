@@ -1141,21 +1141,21 @@ int run_bin(int num_instruc, int d_exist, unsigned int* memory_range) {
 		// 각 스테이지를 컨트롤 해서 실행
 		stage_control();
 
-		if (stage_state[4] = 1){
+		if (stage_state[4] == 1){
 			WB(MEM_WB);
 		}
-		if (stage_state[3] = 1) {
+		if (stage_state[3] == 1) {
 			EX_MEM = Forward_Unit_to_MEM(EX_MEM, MEM_WB);
 			MEM_WB = MEM(EX_MEM);
 		}
-		if (stage_state[2] = 1) {
+		if (stage_state[2] == 1) {
 			ID_EX = Forward_Unit_to_EX(ID_EX, EX_MEM, MEM_WB);
 			EX_MEM = EX(ID_EX);
 		}
-		if (stage_state[1] = 1) {
+		if (stage_state[1] == 1) {
 			ID_EX = ID(IF_ID);
 		}
-		if (stage_state[0] = 1) {
+		if (stage_state[0] == 1) {
 			IF_ID = IF();
 		}
 		
@@ -1171,7 +1171,7 @@ int run_bin(int num_instruc, int d_exist, unsigned int* memory_range) {
 				stage_state[2] = 1;
 			}
 		}
-		if (ID_EX.flush = 1) {
+		if (ID_EX.flush == 1) {
 			IF_ID = STAGE_REG();
 			if (ID_EX.NPC - 4 == 0x400000 + text_size) {
 				stage_state[0] = 1;
