@@ -730,6 +730,16 @@ struct STAGE_REG
 	int ALUOp = 0;
 };
 
+
+void print_pipe(int cycle, STAGE_REG IF_ID, STAGE_REG ID_EX, STAGE_REG EX_MEM, STAGE_REG MEM_WB)
+{
+	cout << "Current pipeline PC state :" << endl;
+	cout << "-----------------------------------------" << endl;
+	cout << "CYCLE " << cycle << ":";
+	cout << hex << PC << "|" <<IF_ID.NPC - 4 << "|" << ID_EX.NPC - 4 <<"|"<< EX_MEM.NPC - 4 <<"|"<< MEM_WB.NPC - 4 << endl;
+	cout << endl;
+}
+
 void Load_Noop(STAGE_REG IF_ID, STAGE_REG ID_EX)
 {
 	string ins = IF_ID.instr;
@@ -1206,15 +1216,22 @@ int run_bin(int num_instruc, int d_exist, unsigned int* memory_range) {
 
 		/*bin_parser(str_line);*/
 		if (d_exist) {
-			if (!(0x400000 <= PC && PC < (0x400000 + text_size))) {
-				PC = PC_temp;
-			}
+			print_pipe(loop_count, IF_ID, ID_EX, EX_MEM, MEM_WB); // need check
 			print_reg(&PC, reg);
 			if (memory_range[2] != 0) {
 				print_mem(mem, memory_range[0], memory_range[1]);  //print_mem(reinterpret_cast<unsigned char*>(mem), start, end);
 			}
 		}
 		loop_count += 1;
+	}
+	
+	if (!(d_exist) || num_instruc == 0) {
+		print_pipe(loop_count, IF_ID, ID_EX, EX_MEM, MEM_WB); // need check
+		print_reg(&PC, reg);
+
+		if (memory_range[2] != 0) {
+			print_mem(mem, memory_range[0], memory_range[1]); //print_mem(reinterpret_cast<unsigned char*>(mem), start, end);
+		}
 	}
 	return 0;
 }
