@@ -731,12 +731,24 @@ struct STAGE_REG
 	int ALUOp = 0;
 };
 
-void print_pipe(int cycle, STAGE_REG IF_ID, STAGE_REG ID_EX, STAGE_REG EX_MEM, STAGE_REG MEM_WB)
+void print_pipe(int cycle, STAGE_REG IF_ID, STAGE_REG ID_EX, STAGE_REG EX_MEM, STAGE_REG MEM_WB, STAGE_REG AFTER_WB)
 {
+	int pipe_PCs[5];
+	pipe_PCs[0] = IF_ID.NPC-4;
+	pipe_PCs[1] = ID_EX.NPC-4;
+	pipe_PCs[2] = EX_MEM.NPC-4;
+	pipe_PCs[3] = MEM_WB.NPC-4;
+	pipe_PCs[4] = AFTER_WB.NPC-4;
 	cout << "Current pipeline PC state :" << endl;
 	cout << "-----------------------------------------" << endl;
-	cout << "CYCLE " << cycle+1 << ":"; //need check for +1 or +0
-	printf("0x%08x|0x%08x|0x%08x|0x%08x|0x%08x", PC, IF_ID.NPC - 4, ID_EX.NPC - 4, EX_MEM.NPC - 4, MEM_WB.NPC - 4);
+	cout << "CYCLE " << cycle + 1 << ":"; //need check for +1 or +0
+	for (int i = 0; i < 5; i++) {
+		if (pipe_PCs[i] == 0) // empty 
+			printf("        |");
+		else
+			printf("0x%08x|", pipe_PCs[i]);
+	}
+	//printf("0x%08x|0x%08x|0x%08x|0x%08x|0x%08x", pipe_PCs[0], pipe_PCs[1], pipe_PCs[2], pipe_PCs[3], pipe_PCs[4] - 4);
 	cout << endl;
 }
 
