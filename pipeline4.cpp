@@ -1232,6 +1232,9 @@ int run_bin(int num_instruc, int d_exist, unsigned int* memory_range) {
 			}
 		}
 		loop_count += 1;
+		if (stage_state[0] == 0 && stage_state[4] == 0) {
+			break;
+		}
 	}
 	
 	if (!(d_exist) || num_instruc == 0) {
@@ -1242,6 +1245,7 @@ int run_bin(int num_instruc, int d_exist, unsigned int* memory_range) {
 			print_mem(mem, memory_range[0], memory_range[1]); //print_mem(reinterpret_cast<unsigned char*>(mem), start, end);
 		}
 	}
+	
 	return 0;
 }
 
