@@ -1255,7 +1255,7 @@ int run_bin(int num_instruc, int d_exist, unsigned int* memory_range) {
 		}
 	}
 	
-	if (!d_exist) {
+	if (!d_exist || num_instruc == 0) {
 		print_pipe(loop_count, IF_ID, ID_EX, EX_MEM, MEM_WB, AFTER_WB); // need check
 		print_reg(&PC, reg);
 
@@ -1321,6 +1321,7 @@ int main(int argc, char *argv[], char *envp[]) {
 
 	create_bin(argv[assem_index]);
 	run_bin(num_instruc, d_exist, memory_range);
+	/*
 	if (!(d_exist) || num_instruc == 0) {
 		if (!(0x400000 <= PC && PC < (0x400000 + text_size))) {
 			//PC = PC_temp;
@@ -1331,7 +1332,7 @@ int main(int argc, char *argv[], char *envp[]) {
 		if (memory_range[2] != 0) {
 			print_mem(mem, memory_range[0], memory_range[1]); //print_mem(reinterpret_cast<unsigned char*>(mem), start, end);
 		}
-	}
+	}*/
 
 	free(mem);
 	return 0;
