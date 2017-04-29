@@ -1188,7 +1188,7 @@ int run_bin(int num_instruc, int d_exist, unsigned int* memory_range) {
 		stage_control();
 
 		if (stage_state[4] == 1) {
-			WB(MEM_WB);
+			AFTER_WB = WB(MEM_WB);
 		}
 		if (stage_state[3] == 1) {
 			EX_MEM = Forward_Unit_to_MEM(EX_MEM, MEM_WB);
