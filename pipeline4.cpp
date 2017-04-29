@@ -1262,7 +1262,7 @@ int run_bin(int num_instruc, int d_exist, unsigned int* memory_range) {
 			}
 		}
 		
-		if (stage_state[0] == 0 && stage_state[1] == 1 && stage_state[2] && stage_state[3] && stage_state[4] == 0) {
+		if (stage_state[0] == 0 && stage_state[1] == 0 && stage_state[2] == 0 && stage_state[3] == 0 && stage_state[4] == 0) {
 			break;
 		}
 	}
