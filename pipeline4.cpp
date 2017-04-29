@@ -1152,12 +1152,13 @@ int run_bin(int num_instruc, int d_exist, unsigned int* memory_range) {
 			EX_MEM = EX(ID_EX);
 		}
 		if (stage_state[1] = 1) {
-			Load_Noop(IF_ID, ID_EX);
 			ID_EX = ID(IF_ID);
 		}
 		if (stage_state[0] = 1) {
 			IF_ID = IF();
 		}
+		
+		Load_Noop(IF_ID, ID_EX); // check noop stall
 		
 		if (MEM_WB.flush == 3) {
 			EX_MEM = STAGE_REG();
