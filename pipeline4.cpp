@@ -995,7 +995,7 @@ STAGE_REG MEM(STAGE_REG EX_MEM)
 	//BRANCH IS HERE!! YEAH!
 	if ((result.ALU_OUT == 0 && EX_MEM.branch == 1) || (result.ALU_OUT != 0 && EX_MEM.branch == 2)) {
 		if (All_taken == 0) {
-			result.flush == 3;
+			result.flush = 3;
 			PC = EX_MEM.IMM * 4 + EX_MEM.NPC;
 		}
 	}
