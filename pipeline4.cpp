@@ -1196,7 +1196,6 @@ int run_bin(int num_instruc, int d_exist, unsigned int* memory_range) {
 			if (ID_EX.jump == 1)
 				PC = J_PC_temp;
 			IF_ID = STAGE_REG();
-			cout << "stall" << endl;
 			if (ID_EX.NPC - 4 == 0x400000 + text_size) {
 				stage_state[0] = 1;
 			}
