@@ -1067,9 +1067,6 @@ STAGE_REG MEM(STAGE_REG EX_MEM)
 		}
 	}
 	
-	//forwarding
-	result.Regdst = EX_MEM.Regdst;
-	
 	return result;
 }
 
