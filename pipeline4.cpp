@@ -816,7 +816,6 @@ STAGE_REG IF(void) //PC를 인자로 주면 PC값이 변경되지 않는 문제�
 	PC = PC + 4;
 	IF_ID.NPC = PC; //Save PC value to IF_ID_Register
 	IF_ID.instr = instruction; //Save PC value to IF_ID_Register
-	cout << instruction << endl;
 
 	return IF_ID;
 }
@@ -942,7 +941,6 @@ STAGE_REG ID(STAGE_REG IF_ID)
 	if (result.jump == 1) {
 		if (opcode == 0x2) { //J code
 			J_PC_temp = (PC & 0xF0000000) + ((convert210(ins.substr(6, 26))) << 2);
-			cout << PC << endl;
 			result.ALUOp = 1;
 		}
 		else if (opcode == 0x3) { //JAL code
