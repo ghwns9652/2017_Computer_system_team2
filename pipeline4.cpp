@@ -835,7 +835,7 @@ STAGE_REG ID(STAGE_REG IF_ID)
 			result.branch = 1;
 			result.ALUSrc = 0;
 			result.ALUOp = 1;
-			
+
 
 			//Branch Always taken
 			if (All_taken == 1) {
@@ -926,6 +926,14 @@ STAGE_REG ID(STAGE_REG IF_ID)
 		result.flush = 1; // flush 1 cycle sign
 	}
 
+	// rd 대입
+	if (result.Regdst == 0) {
+		result.rd = result.REG3;
+	}
+	else if (result.Regdst == 1) {
+		result.rd = result.REG2;
+	}
+
 	return result;
 }
 
@@ -966,15 +974,9 @@ STAGE_REG EX(STAGE_REG ID_EX)
 	else if (ALU_ctrl == 12) {
 		result.ALU_OUT = ~(ID_EX.DATA1 | ID_EX.DATA2);	//nor
 	}
+
 	
-	// rd 대입
-	if (ID_EX.Regdst == 0) {
-		result.rd = ID_EX.REG3;
-	}
-	else if (ID_EX.Regdst == 1) {
-		result.rd = ID_EX.REG2;
-	}
-	
+
 	return result;
 
 	/*if (ID_EX.ALUOp == 2) {
@@ -1055,7 +1057,7 @@ STAGE_REG MEM(STAGE_REG EX_MEM)
 	}
 
 	result.DATA2 = 0;
-	
+
 	//BRANCH IS HERE!! YEAH!
 	if ((result.ALU_OUT == 0 && EX_MEM.branch == 1) || (result.ALU_OUT != 0 && EX_MEM.branch == 2)) {
 		if (All_taken == 0) {
@@ -1063,7 +1065,7 @@ STAGE_REG MEM(STAGE_REG EX_MEM)
 			PC = EX_MEM.IMM * 4 + EX_MEM.NPC;
 		}
 	}
-	
+
 	return result;
 }
 
@@ -1079,14 +1081,14 @@ void WB(STAGE_REG MEM_WB)
 	}
 }
 
-struct STAGE_REG Forward_Unit_to_EX(STAGE_REG ID_EX ,STAGE_REG EX_MEM, STAGE_REG MEM_WB)
+struct STAGE_REG Forward_Unit_to_EX(STAGE_REG ID_EX, STAGE_REG EX_MEM, STAGE_REG MEM_WB)
 {
 	//EX_MEM to EX
 	if (EX_MEM.reg_wt && (EX_MEM.rd != 0) && (EX_MEM.rd == ID_EX.REG1))
 		ID_EX.DATA1 = EX_MEM.ALU_OUT;
 	if (EX_MEM.reg_wt && (EX_MEM.rd != 0) && (EX_MEM.rd == ID_EX.REG2))
 		ID_EX.DATA2 = EX_MEM.ALU_OUT;
-	
+
 	//MEM_WB to EX
 	if (MEM_WB.reg_wt && (MEM_WB.rd != 0) && (EX_MEM.rd != ID_EX.REG1) && (MEM_WB.rd == ID_EX.REG1))
 		ID_EX.DATA1 = MEM_WB.ALU_OUT;
@@ -1140,25 +1142,25 @@ int run_bin(int num_instruc, int d_exist, unsigned int* memory_range) {
 		}
 		// PC 이전값 저장
 		/*if (PC != PC_temp) {
-			END_warn = 0;
+		END_warn = 0;
 		}
 		PC_temp = PC;
 
 		if (END_warn == 1 && PC == EOM) {
-			break;
+		break;
 		}
 		else if (END_warn == 1 && PC == (0x400000 + text_size_ptr - 4)) {
-			break;
+		break;
 		}
 
 		if (PC == EOM || PC == (0x400000 + text_size_ptr - 4)) {
-			END_warn = 1;
+		END_warn = 1;
 		}
 		else {
-			//END_warn = 0;
-			PC += 4;
+		//END_warn = 0;
+		PC += 4;
 		}*/
-		
+
 		WB(MEM_WB);
 		EX_MEM = Forward_Unit_to_MEM(EX_MEM, MEM_WB);
 		MEM_WB = MEM(EX_MEM);
