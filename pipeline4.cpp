@@ -318,7 +318,7 @@ void print_mem(unsigned char *mem, unsigned int addr_begin, unsigned int addr_en
 }
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //assembly file -> binary file
-void create_bin(string file_name) {
+int create_bin(string file_name) {
 	//start of file 02
 
 	ifstream file_;
@@ -486,6 +486,10 @@ void create_bin(string file_name) {
 			label_map.insert(pair<string, unsigned int>(label_temp + "_end", text_adr - 4));
 		}
 		data = print_bin(text_adr - 0x00400000, 32) + "\n" + print_bin(data_adr - 0x10000000, 32) + "\n";
+	}
+	else {
+		cout << "NO FILE!" << endl;
+		return 1;
 	}
 	file_.close();
 
@@ -685,6 +689,7 @@ void create_bin(string file_name) {
 	output << data;
 	output.close();
 	//end of file 02
+	return 0;
 }
 
 
@@ -1334,7 +1339,8 @@ int main(int argc, char *argv[], char *envp[]) {
 		return 0;
 	}
 
-	create_bin(argv[assem_index]);
+	if (create_bin(argv[assem_index]))
+		return 0;
 	run_bin(num_instruc, d_exist, memory_range);
 	/*
 	if (!(d_exist) || num_instruc == 0) {
