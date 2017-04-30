@@ -1260,6 +1260,10 @@ int run_bin(int num_instruc, int d_exist, unsigned int* memory_range) {
 		/*bin_parser(str_line);*/
 
 		
+		if (IF_ID.NPC == 0 && ID_EX.NPC == 0 && EX_MEM.NPC == 0 && MEM_WB.NPC == 0 && AFTER_WB.NPC == 0 && PC != 0x400000) {
+			break;
+		}
+		
 		//print 함수
 		if (d_exist) {
 			if (!(0x400000 <= PC && PC < (0x400000 + text_size))) {
@@ -1272,6 +1276,9 @@ int run_bin(int num_instruc, int d_exist, unsigned int* memory_range) {
 			}
 		}
 
+		if (IF_ID.NPC == 0 && ID_EX.NPC == 0 && EX_MEM.NPC == 0 && MEM_WB.NPC == 0 && AFTER_WB.NPC == 0 && PC != 0x400000) {
+			break;
+		}
 
 	}
 
