@@ -970,8 +970,9 @@ STAGE_REG ID(STAGE_REG IF_ID)
 			result.ALUOp = 1;
 		}
 		else if (opcode == 0) {	//JR code
-			PC = reg[31];
+			J_PC_temp = reg[31];
 			result.ALUOp = 1;
+			cout << "reg[31] : " << reg[31] << endl;
 		}
 		result.flush = 1; // flush 1 cycle sign
 	}
@@ -1264,8 +1265,8 @@ int run_bin(int num_instruc, int d_exist, unsigned int* memory_range) {
 				print_mem(mem, memory_range[0], memory_range[1]);  //print_mem(reinterpret_cast<unsigned char*>(mem), start, end);
 			}
 		}
-		
-		
+
+
 	}
 
 	if (!d_exist || num_instruc == 0) {
