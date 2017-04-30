@@ -1130,7 +1130,7 @@ void stage_control()
 	}
 
 	//끌때 IF 처리
-	if (!(0x400000 <= PC && PC < (0x400000 + text_size_ptr + 4))
+	if (!(0x400000 <= PC && PC < (0x400000 + text_size + 4)))
 		stage_state[0] = 0;
 }
 
