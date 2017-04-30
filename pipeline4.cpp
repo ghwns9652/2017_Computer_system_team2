@@ -1162,8 +1162,8 @@ int run_bin(int num_instruc, int d_exist, int p_exist, unsigned int* memory_rang
 	//for (int line = 0; line < text_size_ptr; line ++)
 	while (1) //0x400000 <= PC && PC < (0x400000 + text_size_ptr + 4
 	{
-		if ((loop_count >= num_instruc) & (num_instruc != -1))
-			break;
+		//if ((loop_count >= num_instruc) & (num_instruc != -1))
+		//	break;
 		string str_line = "";
 		for (int i = 0; i < 4; i++)
 		{
