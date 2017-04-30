@@ -745,6 +745,39 @@ STAGE_REG EX_fix(STAGE_REG EX_MEM) {
 	return EX_MEM;
 }
 
+STAGE_REG WB_fix(STAGE_REG MEM_WB) {
+	STAGE_REG result = MEM_WB;
+	string instr = "00000000000000000000000000000000";
+	//unsigned int NPC = 0;
+	int opcode = 0;
+	int REG1 = 0;
+	int REG2 = 0;
+	int REG3 = 0;
+	int shift = 0;
+	int funct = 0;
+	int IMM = 0;
+	//int rd = 0;
+	//int ALU_OUT = 0;
+	int BR_TARGET = 0;
+	//int MEM_OUT = 0;
+	int DATA1 = 0;
+	int DATA2 = 0;
+	int ALUOp = 0;
+
+	//int reg_wt = 0;
+	int mem_wt = 0;
+	int mem_rd = 0;
+	//int mem2reg = 0;
+	int ALUSrc = 0;
+	int branch = 0;
+	int jump = 0;
+	int Regdst = 0;
+	int flush = 0;
+
+	return result;
+}
+
+
 void print_pipe(int cycle, STAGE_REG IF_ID, STAGE_REG ID_EX, STAGE_REG EX_MEM, STAGE_REG MEM_WB, STAGE_REG AFTER_WB)
 {
 	int pipe_PCs[5];
