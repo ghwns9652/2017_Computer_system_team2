@@ -1266,10 +1266,8 @@ int run_bin(int num_instruc, int d_exist, int p_exist, unsigned int* memory_rang
 		
 		//print 함수
 		if (d_exist) {
-			if (!(0x400000 <= PC && PC < (0x400000 + text_size))) {
-				//PC = PC_temp;
-			}
-			print_pipe(loop_count, IF_ID, ID_EX, EX_MEM, MEM_WB, AFTER_WB);
+			if(p_exist)
+				print_pipe(loop_count, IF_ID, ID_EX, EX_MEM, MEM_WB, AFTER_WB);
 			print_reg(&PC, reg);
 			if (memory_range[2] != 0) {
 				print_mem(mem, memory_range[0], memory_range[1]);  //print_mem(reinterpret_cast<unsigned char*>(mem), start, end);
@@ -1283,7 +1281,8 @@ int run_bin(int num_instruc, int d_exist, int p_exist, unsigned int* memory_rang
 	}
 
 	if (1) {
-		print_pipe(loop_count, IF_ID, ID_EX, EX_MEM, MEM_WB, AFTER_WB); // need check
+		if(p_exist)
+			print_pipe(loop_count, IF_ID, ID_EX, EX_MEM, MEM_WB, AFTER_WB);
 		print_reg(&PC, reg);
 
 		if (memory_range[2] != 0) {
