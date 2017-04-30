@@ -1212,7 +1212,6 @@ int run_bin(int num_instruc, int d_exist, int p_exist, unsigned int* memory_rang
 		//WB stage
 		if (stage_state[4] == 1) {
 			AFTER_WB = WB(MEM_WB);
-			cout << AFTER_WB.NPC << endl;
 			if (AFTER_WB.NPC != 0) {
 				ins_count_WB = ins_count_WB + 1;
 			}	
