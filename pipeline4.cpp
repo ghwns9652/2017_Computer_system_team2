@@ -1226,21 +1226,18 @@ int run_bin(int num_instruc, int d_exist, unsigned int* memory_range) {
 			EX_MEM = STAGE_REG();
 			ID_EX = STAGE_REG();
 			IF_ID = STAGE_REG();
-			if (MEM_WB.NPC - 4 == 0x400000 + text_size) {
-				stage_state[0] = 1;
-				stage_state[1] = 1;
-				stage_state[2] = 1;
-			}
+			stage_state[0] = 1;
+			stage_state[1] = 1;
+			stage_state[2] = 1;
 		}
 
 		if (ID_EX.flush == 1) {
 			if (ID_EX.jump == 1)
 				PC = J_PC_temp;
 			IF_ID = STAGE_REG();
-			if (ID_EX.NPC - 4 == 0x400000 + text_size) {
-				stage_state[0] = 1;
-			}
+			stage_state[0] = 1;
 		}
+
 
 		//noop stall
 		Load_Noop(IF_ID, ID_EX); // check noop stall
