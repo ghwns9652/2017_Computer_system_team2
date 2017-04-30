@@ -939,7 +939,7 @@ STAGE_REG ID(STAGE_REG IF_ID)
 		}
 	}
 
-	if (ins_type == 2 &&  result.funct != 0x8) { //R
+	if (ins_type == 2) { //R
 		result.reg_wt = 1;
 		result.Regdst = 0;
 		result.mem_rd = 0;
