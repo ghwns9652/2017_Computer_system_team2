@@ -843,6 +843,14 @@ STAGE_REG IF(void) //PC를 인자로 주면 PC값이 변경되지 않는 문제�
 	IF_ID.NPC = PC; //Save PC value to IF_ID_Register
 	IF_ID.instr = instruction; //Save PC value to IF_ID_Register
 
+	 //always
+	IF_ID.opcode = convert210(IF_ID.instr.substr(0, 6));
+	IF_ID.REG1 = convert210(IF_ID.instr.substr(6, 5));
+	IF_ID.REG2 = convert210(IF_ID.instr.substr(11, 5)); //i didn't used REG1 <- i will kill you
+	IF_ID.REG3 = convert210(IF_ID.instr.substr(16, 5)); // either REG2 or REG3 become REG destination at EX stage
+	IF_ID.shift = convert210(IF_ID.instr.substr(21, 5));
+	IF_ID.funct = convert210(IF_ID.instr.substr(26, 6));
+
 	return IF_ID;
 }
 
@@ -851,9 +859,13 @@ STAGE_REG ID(STAGE_REG IF_ID)
 	STAGE_REG result = IF_ID;
 
 	string ins = IF_ID.instr;
-	int opcode = convert210(ins.substr(0, 6));
+	int opcode = IF_ID.opcode;
+	int funct = IF_ID.funct;
 	int ins_type = type_checker(opcode);
 	result.jump = 0;
+	result.DATA1 = reg[IF_ID.REG1];
+	result.DATA2 = reg[IF_ID.REG2];
+	result.IMM = sign_extend(convert210(ins.substr(16, 16))); //need sign extended
 
 	//for J code 
 	if (ins_type == 1) {
@@ -867,17 +879,6 @@ STAGE_REG ID(STAGE_REG IF_ID)
 		result.branch = 0;
 		result.ALUSrc = 0;
 	}
-
-	//always
-	result.DATA1 = reg[convert210(ins.substr(6, 5))];
-	result.DATA2 = reg[convert210(ins.substr(11, 5))];
-	result.REG1 = convert210(ins.substr(6, 5));
-	result.REG2 = convert210(ins.substr(11, 5)); //i didn't used REG1 <- i will kill you
-	result.REG3 = convert210(ins.substr(16, 5)); // either REG2 or REG3 become REG destination at EX stage
-	result.shift = convert210(ins.substr(21, 5));
-	result.funct = convert210(ins.substr(26, 6));
-	int funct = result.funct;
-	result.IMM = sign_extend(convert210(ins.substr(16, 16))); //need sign extended
 
 	if (ins_type == 0) { //I
 		result.ALUSrc = 1;
