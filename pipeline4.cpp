@@ -719,8 +719,8 @@ struct STAGE_REG
 	int MEM_OUT = 0;
 	int DATA1 = 0;
 	int DATA2 = 0;
-	int ALUOp = 0;
 	//control
+	int ALUOp = 0;
 	int reg_wt = 0;
 	int mem_wt = 0;
 	int mem_rd = 0;
@@ -732,51 +732,64 @@ struct STAGE_REG
 	int flush = 0;
 };
 
-STAGE_REG EX_fix(STAGE_REG EX_MEM) {
+STAGE_REG MEM_fix(STAGE_REG EX_MEM) {
 	EX_MEM.instr = "00000000000000000000000000000000";
 	EX_MEM.opcode = 0;
 	EX_MEM.shift = 0;
 	EX_MEM.funct = 0;
 	EX_MEM.IMM = 0;
-	EX_MEM.ALUOp = 0;
 	//control
+	EX_MEM.ALUOp = 0;
 	EX_MEM.ALUSrc = 0;
+	EX_MEM.jump = 0;
 	EX_MEM.Regdst = 0;
 	return EX_MEM;
 }
 
 STAGE_REG WB_fix(STAGE_REG MEM_WB) {
-	STAGE_REG result = MEM_WB;
-	string instr = "00000000000000000000000000000000";
-	//unsigned int NPC = 0;
-	int opcode = 0;
-	int REG1 = 0;
-	int REG2 = 0;
-	int REG3 = 0;
-	int shift = 0;
-	int funct = 0;
-	int IMM = 0;
-	//int rd = 0;
-	//int ALU_OUT = 0;
-	int BR_TARGET = 0;
-	//int MEM_OUT = 0;
-	int DATA1 = 0;
-	int DATA2 = 0;
-	int ALUOp = 0;
+	MEM_WB.instr = "00000000000000000000000000000000";
+	MEM_WB.opcode = 0;
+	MEM_WB.shift = 0;
+	MEM_WB.funct = 0;
+	MEM_WB.IMM = 0;
+	//control
+	MEM_WB.ALUOp = 0;
+	MEM_WB.ALUSrc = 0;
+	MEM_WB.branch = 0;
+	MEM_WB.jump = 0;
+	MEM_WB.Regdst = 0;
 
-	//int reg_wt = 0;
-	int mem_wt = 0;
-	int mem_rd = 0;
-	//int mem2reg = 0;
-	int ALUSrc = 0;
-	int branch = 0;
-	int jump = 0;
-	int Regdst = 0;
-	int flush = 0;
-
-	return result;
+	return MEM_WB;
 }
 
+STAGE_REG AFTER_WB_fix(STAGE_REG AFTER_WB) {
+	AFTER_WB.instr = "00000000000000000000000000000000";
+	AFTER_WB.opcode = 0;
+	AFTER_WB.REG1 = 0;
+	AFTER_WB.REG2 = 0;
+	AFTER_WB.REG3 = 0;
+	AFTER_WB.shift = 0;
+	AFTER_WB.funct = 0;
+	AFTER_WB.IMM = 0;
+	AFTER_WB.rd = 0;
+	AFTER_WB.ALU_OUT = 0;
+	AFTER_WB.BR_TARGET = 0;
+	AFTER_WB.MEM_OUT = 0;
+	AFTER_WB.DATA1 = 0;
+	AFTER_WB.DATA2 = 0;
+	//control
+	AFTER_WB.ALUOp = 0;
+	AFTER_WB.reg_wt = 0;
+	AFTER_WB.mem_wt = 0;
+	AFTER_WB.mem_rd = 0;
+	AFTER_WB.mem2reg = 0;
+	AFTER_WB.ALUSrc = 0;
+	AFTER_WB.branch = 0;
+	AFTER_WB.jump = 0;
+	AFTER_WB.Regdst = 0;
+	AFTER_WB.flush = 0;
+	return AFTER_WB;
+}
 
 void print_pipe(int cycle, STAGE_REG IF_ID, STAGE_REG ID_EX, STAGE_REG EX_MEM, STAGE_REG MEM_WB, STAGE_REG AFTER_WB)
 {
@@ -936,7 +949,8 @@ STAGE_REG ID(STAGE_REG IF_ID)
 
 			//Branch Always taken
 			if (All_taken == 1) {
-				PC = IF_ID.NPC + result.IMM * 4;
+				result.BR_TARGET = IF_ID.NPC + result.IMM * 4 - 4;
+				PC = result.BR_TARGET;
 				result.flush = 1;
 			}
 		}
@@ -1072,14 +1086,11 @@ STAGE_REG EX(STAGE_REG ID_EX)
 		result.rd = result.REG2;
 	}
 
-	if (All_taken == 0) {
+	if (All_taken == 0 && result.branch != 0) {
 		result.BR_TARGET = ID_EX.IMM * 4 + ID_EX.NPC;
 	}
-	else if (All_taken == 1) {
-		result.BR_TARGET = result.NPC;
-	}
-	
-	result = EX_fix(result);
+
+	result = MEM_fix(result);
 
 	return result;
 }
@@ -1100,16 +1111,18 @@ STAGE_REG MEM(STAGE_REG EX_MEM)
 	//BRANCH IS HERE!! YEAH!
 	if ((result.ALU_OUT == 0 && EX_MEM.branch == 1) || (result.ALU_OUT != 0 && EX_MEM.branch == 2)) {
 		if (All_taken == 0) {
-			PC = EX_MEM.BR_TARGET;
+			PC = EX_MEM.BR_TARGET - 4;
 			result.flush = 3;
 		}
 	}
 	else {
 		if (All_taken == 1 && EX_MEM.branch != 0) {
-			PC = EX_MEM.BR_TARGET;
+			PC = EX_MEM.BR_TARGET - 4;
 			result.flush = 3;
 		}
 	}
+
+	result = WB_fix(result);
 
 	return result;
 }
@@ -1123,6 +1136,9 @@ struct STAGE_REG WB(STAGE_REG MEM_WB)
 	if (MEM_WB.reg_wt == 1 && MEM_WB.mem2reg == 0) {
 		reg[MEM_WB.rd] = MEM_WB.ALU_OUT;
 	}
+
+	MEM_WB = AFTER_WB_fix(MEM_WB);
+
 	return MEM_WB;
 }
 
@@ -1306,6 +1322,10 @@ int run_bin(int num_instruc, int d_exist, int p_exist, unsigned int* memory_rang
 			PC = PC - 4;
 			IF_ID = IF();
 			ins_count_IF = ins_count_IF + 1; // n option
+
+			if (PC >= (0x400000 + text_size)) { // load가 마지막인 경우 처
+				stage_state[0] = 0;
+			}
 		}
 		else {
 			IF_ID = STAGE_REG();
@@ -1367,8 +1387,11 @@ int run_bin(int num_instruc, int d_exist, int p_exist, unsigned int* memory_rang
 	}
 
 	if (1) {
-		if (p_exist)
+		if (p_exist) {
+			printf("Completion Cycle: %d\n", loop_count);
+			cout << endl;
 			print_pipe(loop_count, IF_ID, ID_EX, EX_MEM, MEM_WB, AFTER_WB);
+		}
 		print_reg(&PC, reg);
 
 		if (memory_range[2] != 0) {
