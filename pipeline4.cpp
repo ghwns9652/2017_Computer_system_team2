@@ -1186,8 +1186,10 @@ int run_bin(int num_instruc, int d_exist, unsigned int* memory_range) {
 
 		// 각 스테이지를 컨트롤 해서 실행
 		stage_control();
+		loop_count += 1;
 
 		if (stage_state[0] == 0 && stage_state[1] == 0 && stage_state[2] == 0 && stage_state[3] == 0 && stage_state[4] == 0) {
+			AFTER_WB = STAGE_REG();
 			break;
 		}
 
@@ -1250,7 +1252,7 @@ int run_bin(int num_instruc, int d_exist, unsigned int* memory_range) {
 
 		/*bin_parser(str_line);*/
 
-		loop_count += 1;
+		
 		//print 함수
 		if (d_exist) {
 			if (!(0x400000 <= PC && PC < (0x400000 + text_size))) {
@@ -1266,7 +1268,7 @@ int run_bin(int num_instruc, int d_exist, unsigned int* memory_range) {
 
 	}
 
-	if (!d_exist || num_instruc == 0) {
+	if (1) {
 		print_pipe(loop_count, IF_ID, ID_EX, EX_MEM, MEM_WB, AFTER_WB); // need check
 		print_reg(&PC, reg);
 
