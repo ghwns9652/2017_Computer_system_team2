@@ -1258,6 +1258,10 @@ int run_bin(int num_instruc, int d_exist, int p_exist, unsigned int* memory_rang
 			PC = PC - 4;
 			IF_ID = IF();
 			ins_count_IF = ins_count_IF + 1; // n option
+			
+			if (PC >= (0x400000 + text_size)) { // load가 마지막인 경우 처
+				stage_state[0] = 0;
+			}	
 		}
 		else {
 			IF_ID = STAGE_REG();
