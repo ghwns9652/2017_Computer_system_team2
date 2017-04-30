@@ -16,7 +16,6 @@ stuct STAGE_REG
     int ALU_OUT = 0;
     int BR_TARGET = 0;
     int MEM_OUT = 0;
-    int reg_data = 0;
     int DATA1 = 0;
     int DATA2 = 0;
     int ALUOp = 0;
@@ -25,7 +24,6 @@ stuct STAGE_REG
     int mem_wt = 0;
     int mem_rd = 0;
     int mem2reg = 0;
-    int sign_ex = 0;
     int ALUSrc = 0;
     int branch = 0;
     int jump = 0;
@@ -39,4 +37,13 @@ rd 는 EX 단계에서 REG2 와 REG3 중 하나를 Regdst 정보를 바탕으로
 BR_TARGET에는 EX 단계에서 계산한 branch 주소값을 저장하여 MEM 단계에서 이로 분기한다.
 DATA1과 DATA2는 ID 단계에서 read한 register의 값을 저장해주는 공간이다.
 ALUOp는 ALU_controller 함수에서 ALU의 작동 방식을 고르기 위해 필요한 값이다.
-이 뒤로는 모두 controll signal 인데, 
+이 뒤로는 모드 controll signal 인데,
+reg_wt는 레지스터에 쓰는 여부를 결정
+mem_wt는 메모리에 쓰는 여부를 결정
+mem_rd는 메모리를 읽는 여부를 결정
+mem2reg는 write back의 여부를 결정
+ALUsrc는 imm과 DATA2 중에서 어느 부분을 ALU에 넣어줄지 결정
+branch에는 branch 여부와 bne인지 beq인지를 확인하여 넣어준다.
+jump에는 jump의 여부를 결정
+Regdst는 reg2와 reg3중에서 어디가 목표 register인지 정해준다.
+flush는 양수일 경우 flush의 횟수를, 음수일 경우, noop의 횟수를 결정한다.
