@@ -941,6 +941,7 @@ STAGE_REG ID(STAGE_REG IF_ID)
 	}
 
 	if (ins_type == 2) { //R
+		if(funct != 0x8){
 		result.reg_wt = 1;
 		result.Regdst = 0;
 		result.mem_rd = 0;
@@ -949,9 +950,8 @@ STAGE_REG ID(STAGE_REG IF_ID)
 		result.branch = 0;
 		result.ALUSrc = 0;
 		result.ALUOp = 2;
-
-
-		if (funct == 0x8) { //FEAR OF JR
+		}
+		else { //FEAR OF JR
 			result.jump = 1;
 		}
 	}
