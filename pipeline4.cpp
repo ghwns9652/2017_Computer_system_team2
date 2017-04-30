@@ -745,7 +745,7 @@ void print_pipe(int cycle, STAGE_REG IF_ID, STAGE_REG ID_EX, STAGE_REG EX_MEM, S
 	pipe_PCs[3] = MEM_WB.NPC;
 	pipe_PCs[4] = AFTER_WB.NPC;
 	cout << "Current pipeline PC state :" << endl;
-	cout << "-----------------------------------------" << endl;
+	cout << "-------------------------------------" << endl;
 	cout << "CYCLE " << cycle << ":"; //need check for +1 or +0
 	for (int i = 0; i < 5; i++) {
 		if (pipe_PCs[i] == 0) // empty 
