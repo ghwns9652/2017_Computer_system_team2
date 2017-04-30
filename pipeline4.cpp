@@ -749,7 +749,7 @@ void print_pipe(int cycle, STAGE_REG IF_ID, STAGE_REG ID_EX, STAGE_REG EX_MEM, S
 	cout << "CYCLE " << cycle << ":"; //need check for +1 or +0
 	for (int i = 0; i < 5; i++) {
 		if (pipe_PCs[i] == 0) // empty 
-			printf("        |");
+			printf("          |");
 		else
 			printf("0x%08x|", pipe_PCs[i] - 4);
 	}
