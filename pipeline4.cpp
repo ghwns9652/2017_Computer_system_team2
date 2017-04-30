@@ -717,7 +717,6 @@ struct STAGE_REG
 	int ALU_OUT = 0;
 	int BR_TARGET = 0;
 	int MEM_OUT = 0;
-	int reg_data = 0;
 	//control
 	int reg_wt = 0;
 	//int PC;
@@ -751,7 +750,7 @@ void print_pipe(int cycle, STAGE_REG IF_ID, STAGE_REG ID_EX, STAGE_REG EX_MEM, S
 			printf("          ");
 		else
 			printf("0x%08x", pipe_PCs[i] - 4);
-		if(i!=4)
+		if (i != 4)
 			printf("|");
 	}
 	//printf("0x%08x|0x%08x|0x%08x|0x%08x|0x%08x", pipe_PCs[0], pipe_PCs[1], pipe_PCs[2], pipe_PCs[3], pipe_PCs[4] - 4);
@@ -762,7 +761,7 @@ void Load_Noop(STAGE_REG IF_ID, STAGE_REG ID_EX)
 {
 	// REG2 = rd인 경우와 REG3 = rd인 경우 처리 + 없는 경우
 	if ((IF_ID.opcode == 2) || (IF_ID.opcode == 3)) { // J type
-								  //공백 flush에서 J type은 처리함.
+													  //공백 flush에서 J type은 처리함.
 	}
 	else if ((IF_ID.opcode == 0) && (IF_ID.funct == 8)) { // JR
 		if ((ID_EX.mem_rd == 1) && (ID_EX.REG2 == IF_ID.REG1))
@@ -838,7 +837,7 @@ STAGE_REG IF(void) //PC를 인자로 주면 PC값이 변경되지 않는 문제�
 	IF_ID.NPC = PC; //Save PC value to IF_ID_Register
 	IF_ID.instr = instruction; //Save PC value to IF_ID_Register
 
-	 //always
+							   //always
 	IF_ID.opcode = convert210(IF_ID.instr.substr(0, 6));
 	IF_ID.REG1 = convert210(IF_ID.instr.substr(6, 5));
 	IF_ID.REG2 = convert210(IF_ID.instr.substr(11, 5)); //i didn't used REG1 <- i will kill you
@@ -862,7 +861,7 @@ STAGE_REG ID(STAGE_REG IF_ID)
 	result.DATA2 = reg[IF_ID.REG2];
 	result.IMM = sign_extend(convert210(ins.substr(16, 16))); //need sign extended
 
-	//for J code 
+															  //for J code 
 	if (ins_type == 1) {
 		//need jump and flush
 		result.jump = 1;
@@ -886,7 +885,7 @@ STAGE_REG ID(STAGE_REG IF_ID)
 			result.branch = opcode - 3;
 			result.ALUSrc = 0;
 			result.ALUOp = 1;
-			
+
 
 
 			//Branch Always taken
@@ -942,15 +941,15 @@ STAGE_REG ID(STAGE_REG IF_ID)
 	}
 
 	if (ins_type == 2) { //R
-		if(funct != 0x8){
-		result.reg_wt = 1;
-		result.Regdst = 0;
-		result.mem_rd = 0;
-		result.mem_wt = 0;
-		result.mem2reg = 0;
-		result.branch = 0;
-		result.ALUSrc = 0;
-		result.ALUOp = 2;
+		if (funct != 0x8) {
+			result.reg_wt = 1;
+			result.Regdst = 0;
+			result.mem_rd = 0;
+			result.mem_wt = 0;
+			result.mem2reg = 0;
+			result.branch = 0;
+			result.ALUSrc = 0;
+			result.ALUOp = 2;
 		}
 		else { //FEAR OF JR
 			result.jump = 1;
@@ -1026,7 +1025,7 @@ STAGE_REG EX(STAGE_REG ID_EX)
 	else if (result.Regdst == 1) {
 		result.rd = result.REG2;
 	}
-	
+
 	if (All_taken == 0) {
 		result.BR_TARGET = ID_EX.IMM * 4 + ID_EX.NPC;
 	}
@@ -1045,7 +1044,7 @@ STAGE_REG MEM(STAGE_REG EX_MEM)
 	}
 
 	if (EX_MEM.mem_rd == 1) {
-		result.reg_data = read_mem(EX_MEM.ALU_OUT);
+		result.MEM_OUT = read_mem(EX_MEM.ALU_OUT);
 	}
 
 	result.DATA2 = 0;
@@ -1070,7 +1069,7 @@ STAGE_REG MEM(STAGE_REG EX_MEM)
 struct STAGE_REG WB(STAGE_REG MEM_WB)
 {
 	if (MEM_WB.reg_wt == 1 && MEM_WB.mem2reg == 1) {
-		reg[MEM_WB.rd] = MEM_WB.reg_data;
+		reg[MEM_WB.rd] = MEM_WB.MEM_OUT;
 	}
 
 	if (MEM_WB.reg_wt == 1 && MEM_WB.mem2reg == 0) {
@@ -1087,19 +1086,19 @@ struct STAGE_REG Forward_Unit_EX_to_EX(STAGE_REG ID_EX, STAGE_REG EX_MEM, STAGE_
 
 	if (EX_MEM.reg_wt && (EX_MEM.rd != 0) && (EX_MEM.rd == ID_EX.REG2)) // ALU 연산결과 포워딩
 		ID_EX.DATA2 = EX_MEM.ALU_OUT;
-	
+
 	return ID_EX;
 }
 struct STAGE_REG Forward_Unit_MEM_to_EX(STAGE_REG ID_EX, STAGE_REG EX_MEM, STAGE_REG MEM_WB)
 {
 	//MEM_WB to EX
-	if (MEM_WB.reg_wt && MEM_WB.mem_rd &&(MEM_WB.rd != 0) && (MEM_WB.rd == ID_EX.REG1)) // load의 경우 읽은 메모리값 포워딩
-		ID_EX.DATA1 = MEM_WB.reg_data;
+	if (MEM_WB.reg_wt && MEM_WB.mem_rd && (MEM_WB.rd != 0) && (MEM_WB.rd == ID_EX.REG1)) // load의 경우 읽은 메모리값 포워딩
+		ID_EX.DATA1 = MEM_WB.MEM_OUT;
 	else if (MEM_WB.reg_wt && (MEM_WB.rd != 0) && (EX_MEM.rd != ID_EX.REG1) && (MEM_WB.rd == ID_EX.REG1)) // ALU 연산결과 포워딩
 		ID_EX.DATA1 = MEM_WB.ALU_OUT;
 
 	if (MEM_WB.reg_wt && MEM_WB.mem_rd && (MEM_WB.rd != 0) && (MEM_WB.rd == ID_EX.REG2)) // load의 경우 읽은 메모리값 포워딩
-		ID_EX.DATA2 = MEM_WB.reg_data;
+		ID_EX.DATA2 = MEM_WB.MEM_OUT;
 	else if (MEM_WB.reg_wt && (MEM_WB.rd != 0) && (EX_MEM.rd != ID_EX.REG2) && (MEM_WB.rd == ID_EX.REG2)) // ALU 연산결과 포워딩
 		ID_EX.DATA2 = MEM_WB.ALU_OUT;
 
@@ -1110,7 +1109,7 @@ struct STAGE_REG Forward_Unit_MEM_to_MEM(STAGE_REG EX_MEM, STAGE_REG MEM_WB)
 {
 	//MEM_WB to MEM --- load 다음 store 인 경우
 	if (MEM_WB.reg_wt && (MEM_WB.rd != 0) && (MEM_WB.rd == EX_MEM.REG2))
-		EX_MEM.DATA2 = MEM_WB.reg_data;
+		EX_MEM.DATA2 = MEM_WB.MEM_OUT;
 
 	return EX_MEM;
 }
@@ -1220,7 +1219,7 @@ int run_bin(int num_instruc, int d_exist, int p_exist, unsigned int* memory_rang
 			AFTER_WB = WB(MEM_WB);
 			if (AFTER_WB.NPC != 0) {
 				ins_count_WB = ins_count_WB + 1;
-			}	
+			}
 		}
 
 		//MEM stage
