@@ -54,5 +54,6 @@ AFTER_WB은 WB stage가 끝나고 WB 있었던 instruction의 PC값을 저장하
 따라서 하단의 register 값들은 각 pipeline 출력에 나온 PC 값들에 해당하는 명령어들이 각 스테이지를 마친 후의 레지스터 상태가 출력된다. 
 ex) pipeline 상태창에 5번째칸 WB stage에 0x400008이 들어있으면 0x400008에 해당하는 instruction이 WB stage를 마친 결과를 출력함.
 
+stall을 위한 빈 명령어는 32개가 전부 0인 명령어를 넣어(sll $0, $0, 0) 만들었다.
 
 종료 조건은 유의미한 instruction을 가리키지 않을 때 PC값은 그 무의미한 곳을 가리키면서 종료된다.
