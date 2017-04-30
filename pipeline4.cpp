@@ -1333,7 +1333,9 @@ int run_bin(int num_instruc, int d_exist, int p_exist, unsigned int* memory_rang
 
 		if (MEM_WB.flush == 3) {
 			ins_count_IF = ins_count_IF - 3; // n option
-
+			if (ins_count_IF < 0)
+				ins_count_IF = 0;
+			
 			EX_MEM = STAGE_REG();
 			ID_EX = STAGE_REG();
 			IF_ID = STAGE_REG();
