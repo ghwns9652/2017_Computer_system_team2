@@ -773,7 +773,7 @@ int Load_Noop(STAGE_REG IF_ID, STAGE_REG ID_EX)
 		if ((ID_EX.mem_rd == 1) && (ID_EX.REG2 == IF_ID.REG1))
 			ID_EX.flush = -1;
 	}
-	
+
 	return ID_EX.flush;
 }
 
