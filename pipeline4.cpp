@@ -1244,14 +1244,12 @@ int run_bin(int num_instruc, int d_exist, int p_exist, unsigned int* memory_rang
 		END_warn = 0;
 		}
 		PC_temp = PC;
-
 		if (END_warn == 1 && PC == EOM) {
 		break;
 		}
 		else if (END_warn == 1 && PC == (0x400000 + text_size_ptr - 4)) {
 		break;
 		}
-
 		if (PC == EOM || PC == (0x400000 + text_size_ptr - 4)) {
 		END_warn = 1;
 		}
@@ -1333,9 +1331,7 @@ int run_bin(int num_instruc, int d_exist, int p_exist, unsigned int* memory_rang
 
 		if (MEM_WB.flush == 3) {
 			ins_count_IF = ins_count_IF - 3; // n option
-			if (ins_count_IF < 0)
-				ins_count_IF = 0;
-			
+
 			EX_MEM = STAGE_REG();
 			ID_EX = STAGE_REG();
 			IF_ID = STAGE_REG();
@@ -1474,9 +1470,7 @@ int main(int argc, char *argv[], char *envp[]) {
 	if (!(0x400000 <= PC && PC < (0x400000 + text_size))) {
 	//PC = PC_temp;
 	}
-
 	print_reg(&PC, reg);
-
 	if (memory_range[2] != 0) {
 	print_mem(mem, memory_range[0], memory_range[1]); //print_mem(reinterpret_cast<unsigned char*>(mem), start, end);
 	}
