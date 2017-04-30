@@ -710,28 +710,26 @@ struct STAGE_REG
 	int REG1 = 0;
 	int REG2 = 0;
 	int REG3 = 0;
-	int rd = 0;
 	int shift = 0;
 	int funct = 0;
 	int IMM = 0;
+	int rd = 0;
 	int ALU_OUT = 0;
 	int BR_TARGET = 0;
 	int MEM_OUT = 0;
+	int DATA1 = 0;
+	int DATA2 = 0;
+	int ALUOp = 0;
 	//control
 	int reg_wt = 0;
-	//int PC;
 	int mem_wt = 0;
 	int mem_rd = 0;
 	int mem2reg = 0;
-	int sign_ex = 0;
 	int ALUSrc = 0;
 	int branch = 0;
 	int jump = 0;
 	int Regdst = 0;
-	int DATA1 = 0;
-	int DATA2 = 0;
 	int flush = 0;
-	int ALUOp = 0;
 };
 
 void print_pipe(int cycle, STAGE_REG IF_ID, STAGE_REG ID_EX, STAGE_REG EX_MEM, STAGE_REG MEM_WB, STAGE_REG AFTER_WB)
