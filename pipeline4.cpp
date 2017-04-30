@@ -1153,7 +1153,8 @@ int run_bin(int num_instruc, int d_exist, int p_exist, unsigned int* memory_rang
 	int text_size_ptr = 0;
 	int data_size_ptr = 0;
 	int loop_count = 0;
-
+	int ins_count = 0;
+	
 	save_ins(&text_size_ptr, &data_size_ptr, mem, num_instruc);
 	text_size = text_size_ptr;
 	//cout << text_size_ptr << endl;
@@ -1225,12 +1226,15 @@ int run_bin(int num_instruc, int d_exist, int p_exist, unsigned int* memory_rang
 		}
 		if (stage_state[0] == 1) {
 			IF_ID = IF();
+			ins_count = ins_count + 1; // n option
 		}
 		else {
 			IF_ID = STAGE_REG();
 		}
 
 		if (MEM_WB.flush == 3) {
+			ins_count = ins_count -3; // n option
+			
 			EX_MEM = STAGE_REG();
 			ID_EX = STAGE_REG();
 			IF_ID = STAGE_REG();
@@ -1240,6 +1244,8 @@ int run_bin(int num_instruc, int d_exist, int p_exist, unsigned int* memory_rang
 		}
 
 		if (ID_EX.flush == 1) {
+			ins_count = ins_count - 1; // n option
+			
 			if (ID_EX.jump == 1)
 				PC = J_PC_temp;
 			IF_ID = STAGE_REG();
@@ -1250,6 +1256,8 @@ int run_bin(int num_instruc, int d_exist, int p_exist, unsigned int* memory_rang
 		//noop stall
 		Load_Noop(IF_ID, ID_EX); // check noop stall
 		if (stage_state[0] == -1) {
+			ins_count = ins_count - 1; // n option
+			
 			ID_EX = STAGE_REG();
 			stage_state[0] = 1;
 		}
@@ -1277,7 +1285,10 @@ int run_bin(int num_instruc, int d_exist, int p_exist, unsigned int* memory_rang
 		if (IF_ID.NPC == 0 && ID_EX.NPC == 0 && EX_MEM.NPC == 0 && MEM_WB.NPC == 0 && AFTER_WB.NPC == 0 && PC != 0x400000) {
 			break;
 		}
-
+		
+		if (ins_count >= num_instruc) {
+			break;
+		}
 	}
 
 	if (1) {
