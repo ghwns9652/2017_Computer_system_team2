@@ -1354,6 +1354,12 @@ int main(int argc, char *argv[], char *envp[]) {
 		else if (strcmp(argv[i], "-p") == 0) {
 			p_exist = 1;	// save existance of -p
 		}
+		else if (strcmp(argv[i], "-antp") == 0) {
+			All_taken = 0;
+		}
+		else if (strcmp(argv[i], "-atp") == 0) {
+			All_taken = 1;
+		}
 		else if (string(argv[i]).find(".s") != string::npos) //(string(argv[i]).find(".s") != string(argv[i]).length()-1)
 		{
 			assem_index = i;
