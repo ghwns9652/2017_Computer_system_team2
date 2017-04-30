@@ -1191,13 +1191,6 @@ int run_bin(int num_instruc, int d_exist, int p_exist, unsigned int* memory_rang
 		PC += 4;
 		}*/
 
-		// n option 
-		if (ins_count_IF >= num_instruc && num_instruc != -1) {
-			stage_state[0] = 0;
-		}
-		if (ins_count_WB >= num_instruc && num_instruc != -1) {
-			break;
-		}
 
 		// 각 스테이지를 컨트롤 해서 실행
 		stage_control();
@@ -1208,11 +1201,24 @@ int run_bin(int num_instruc, int d_exist, int p_exist, unsigned int* memory_rang
 			break;
 		}
 
+		// n option 
+		if (ins_count_IF >= num_instruc && num_instruc != -1) { // IF에서 들어오는 instruction 숫자 제한함. flush 일때는 - 해서 다시 시동
+			stage_state[0] = 0;
+		}
+		if (ins_count_WB >= num_instruc && num_instruc != -1) { // WB에서 instruction 수를 카운트 해서 종료
+			break;
+		}
+
+		//WB stage
 		if (stage_state[4] == 1) {
 			AFTER_WB = WB(MEM_WB);
-			if (AFTER_WB.NPC != 0)
+			cout << AFTER_WB.NPC << endl;
+			if (AFTER_WB.NPC != 0) {
 				ins_count_WB = ins_count_WB + 1;
+			}	
 		}
+
+		//MEM stage
 		if (stage_state[3] == 1) {
 			EX_MEM = Forward_Unit_MEM_to_MEM(EX_MEM, MEM_WB);
 			ID_EX = Forward_Unit_MEM_to_EX(ID_EX, EX_MEM, MEM_WB);
@@ -1221,6 +1227,8 @@ int run_bin(int num_instruc, int d_exist, int p_exist, unsigned int* memory_rang
 		else {
 			MEM_WB = STAGE_REG();
 		}
+
+		//EX stage
 		if (stage_state[2] == 1) {
 			ID_EX = Forward_Unit_EX_to_EX(ID_EX, EX_MEM, MEM_WB);
 			EX_MEM = EX(ID_EX);
@@ -1228,12 +1236,16 @@ int run_bin(int num_instruc, int d_exist, int p_exist, unsigned int* memory_rang
 		else {
 			EX_MEM = STAGE_REG();
 		}
+
+		//ID stage
 		if (stage_state[1] == 1) {
 			ID_EX = ID(IF_ID);
 		}
 		else {
 			ID_EX = STAGE_REG();
 		}
+
+		//IF stage
 		if (stage_state[0] == 1) {
 			IF_ID = IF();
 			ins_count_IF = ins_count_IF + 1; // n option
