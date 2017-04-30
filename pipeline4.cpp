@@ -1134,7 +1134,7 @@ void stage_control()
 		stage_state[0] = 0;
 }
 
-int run_bin(int num_instruc, int d_exist, unsigned int* memory_range) {
+int run_bin(int num_instruc, int d_exist, int p_exist, unsigned int* memory_range) {
 	//initialize
 
 	PC = 0x400000;
@@ -1305,6 +1305,7 @@ int main(int argc, char *argv[], char *envp[]) {
 	unsigned int memory_range[3]; // memory range
 	memory_range[2] = 0;
 	int d_exist = 0; // existance of -d
+	int p_exist = 0; // existance of -p
 	int num_instruc = -1; // number of instruction to execute
 	int assem_index = -1;
 
@@ -1328,11 +1329,14 @@ int main(int argc, char *argv[], char *envp[]) {
 		}
 		else if (strcmp(argv[i], "-d") == 0)
 		{
-			d_exist = 1; // save existance of -d
+			d_exist = 1;	// save existance of -d
 		}
 		else if (strcmp(argv[i], "-n") == 0)
 		{
 			num_instruc = stoi(argv[i + 1]);// save number of instruction to execute
+		}
+		else if (strcmp(argv[i], "-p") == 0) {
+			p_exist = 1;	// save existance of -p
 		}
 		else if (string(argv[i]).find(".s") != string::npos) //(string(argv[i]).find(".s") != string(argv[i]).length()-1)
 		{
@@ -1348,7 +1352,7 @@ int main(int argc, char *argv[], char *envp[]) {
 
 	if (create_bin(argv[assem_index]))
 		return 0;
-	run_bin(num_instruc, d_exist, memory_range);
+	run_bin(num_instruc, d_exist, p_exist, memory_range);
 	/*
 	if (!(d_exist) || num_instruc == 0) {
 	if (!(0x400000 <= PC && PC < (0x400000 + text_size))) {
