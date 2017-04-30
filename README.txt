@@ -47,7 +47,8 @@ branch에는 branch 여부와 bne인지 beq인지를 확인하여 넣어준다.
 jump에는 jump의 여부를 결정
 Regdst는 reg2와 reg3중에서 어디가 목표 register인지 정해준다.
 flush는 양수일 경우 flush의 횟수를, 음수일 경우, noop의 횟수를 결정한다.
-AFTER_WB은 WB stage가 끝나고 WB 있었던 instruction의 PC값을 저장하고 pipeline  상태창에 출력하기 위해 만든 변수
+AFTER_WB은 WB stage가 끝나고 WB 있었던 instruction의 PC값을 저장하고 pipeline  상태창에 출력하기 위해 만든 변수(NPC만 존재)
+각 단계의 register는 _fix 로 끝나는 함수에 의해서 필요없는 신호를 0으로 초기화해준다.
 
 출력의 형태는 -p 옵션이 있을때, 상단의 pipeline 출력에는 해당 스테이지를 마친 명령어의 시작하는 주소값이 나와있으며
 따라서 하단의 register 값들은 각 pipeline 출력에 나온 PC 값들에 해당하는 명령어들이 각 스테이지를 마친 후의 레지스터 상태가 출력된다. 
