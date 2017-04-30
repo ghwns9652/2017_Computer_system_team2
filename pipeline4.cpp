@@ -1286,7 +1286,7 @@ int run_bin(int num_instruc, int d_exist, int p_exist, unsigned int* memory_rang
 			break;
 		}
 		
-		if (ins_count >= num_instruc) {
+		if (ins_count >= num_instruc && num_instruc != -1) {
 			break;
 		}
 	}
@@ -1344,12 +1344,6 @@ int main(int argc, char *argv[], char *envp[]) {
 		else if (strcmp(argv[i], "-n") == 0)
 		{
 			num_instruc = stoi(argv[i + 1]);// save number of instruction to execute
-		}
-		else if (strcmp(argv[i], "-antp") == 0) {
-			All_taken = 0;
-		}
-		else if (strcmp(argv[i], "-atp") == 0) {
-			All_taken = 1;
 		}
 		else if (strcmp(argv[i], "-p") == 0) {
 			p_exist = 1;	// save existance of -p
