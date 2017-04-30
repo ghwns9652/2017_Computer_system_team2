@@ -890,7 +890,7 @@ STAGE_REG ID(STAGE_REG IF_ID)
 
 			//Branch Always taken
 			if (All_taken == 1) {
-				PC = IF_ID.NPC + result.IMM * 4;
+				result.BR_TARGET = IF_ID.NPC + result.IMM * 4;
 				result.flush = 1;
 			}
 		}
@@ -1030,6 +1030,7 @@ STAGE_REG EX(STAGE_REG ID_EX)
 		result.BR_TARGET = ID_EX.IMM * 4 + ID_EX.NPC;
 	}
 	else if (All_taken == 1) {
+		PC = result.BR_TARGET;
 		result.BR_TARGET = result.NPC;
 	}
 
