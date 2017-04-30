@@ -1026,6 +1026,13 @@ STAGE_REG EX(STAGE_REG ID_EX)
 	else if (result.Regdst == 1) {
 		result.rd = result.REG2;
 	}
+	
+	if (All_taken == 0) {
+		result.BR_TARGET = ID_EX.IMM * 4 + ID_EX.NPC;
+	}
+	else if (All_taken == 1) {
+		result.BR_TARGET = result.NPC;
+	}
 
 	return result;
 }
@@ -1046,13 +1053,13 @@ STAGE_REG MEM(STAGE_REG EX_MEM)
 	//BRANCH IS HERE!! YEAH!
 	if ((result.ALU_OUT == 0 && EX_MEM.branch == 1) || (result.ALU_OUT != 0 && EX_MEM.branch == 2)) {
 		if (All_taken == 0) {
+			PC = EX_MEM.BR_TARGET;
 			result.flush = 3;
-			PC = EX_MEM.IMM * 4 + EX_MEM.NPC;
 		}
 	}
 	else {
-		if (All_taken == 1 && EX_MEM.branch !=0) {
-			PC = result.NPC;
+		if (All_taken == 1 && EX_MEM.branch != 0) {
+			PC = EX_MEM.BR_TARGET;
 			result.flush = 3;
 		}
 	}
