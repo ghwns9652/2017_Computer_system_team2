@@ -1153,8 +1153,9 @@ int run_bin(int num_instruc, int d_exist, int p_exist, unsigned int* memory_rang
 	int text_size_ptr = 0;
 	int data_size_ptr = 0;
 	int loop_count = 0;
-	int ins_count = 0;
-	
+	int ins_count_IF = 0;
+	int ins_count_WB = 0;
+
 	save_ins(&text_size_ptr, &data_size_ptr, mem, num_instruc);
 	text_size = text_size_ptr;
 	//cout << text_size_ptr << endl;
@@ -1189,9 +1190,12 @@ int run_bin(int num_instruc, int d_exist, int p_exist, unsigned int* memory_rang
 		//END_warn = 0;
 		PC += 4;
 		}*/
-		
+
 		// n option 
-		if (ins_count >= num_instruc && num_instruc != -1) {
+		if (ins_count_IF >= num_instruc && num_instruc != -1) {
+			stage_state[0] = 0;
+		}
+		if (ins_count_WB >= num_instruc && num_instruc != -1) {
 			break;
 		}
 
@@ -1206,6 +1210,8 @@ int run_bin(int num_instruc, int d_exist, int p_exist, unsigned int* memory_rang
 
 		if (stage_state[4] == 1) {
 			AFTER_WB = WB(MEM_WB);
+			if (AFTER_WB.NPC != 0)
+				ins_count_WB = ins_count_WB + 1;
 		}
 		if (stage_state[3] == 1) {
 			EX_MEM = Forward_Unit_MEM_to_MEM(EX_MEM, MEM_WB);
@@ -1230,15 +1236,15 @@ int run_bin(int num_instruc, int d_exist, int p_exist, unsigned int* memory_rang
 		}
 		if (stage_state[0] == 1) {
 			IF_ID = IF();
-			ins_count = ins_count + 1; // n option
+			ins_count_IF = ins_count_IF + 1; // n option
 		}
 		else {
 			IF_ID = STAGE_REG();
 		}
 
 		if (MEM_WB.flush == 3) {
-			ins_count = ins_count -3; // n option
-			
+			ins_count_IF = ins_count_IF - 3; // n option
+
 			EX_MEM = STAGE_REG();
 			ID_EX = STAGE_REG();
 			IF_ID = STAGE_REG();
@@ -1248,8 +1254,8 @@ int run_bin(int num_instruc, int d_exist, int p_exist, unsigned int* memory_rang
 		}
 
 		if (ID_EX.flush == 1) {
-			ins_count = ins_count - 1; // n option
-			
+			ins_count_IF = ins_count_IF - 1; // n option
+
 			if (ID_EX.jump == 1)
 				PC = J_PC_temp;
 			IF_ID = STAGE_REG();
@@ -1260,8 +1266,8 @@ int run_bin(int num_instruc, int d_exist, int p_exist, unsigned int* memory_rang
 		//noop stall
 		Load_Noop(IF_ID, ID_EX); // check noop stall
 		if (stage_state[0] == -1) {
-			ins_count = ins_count - 1; // n option
-			
+			ins_count_IF = ins_count_IF - 1; // n option
+
 			ID_EX = STAGE_REG();
 			stage_state[0] = 1;
 		}
@@ -1271,14 +1277,14 @@ int run_bin(int num_instruc, int d_exist, int p_exist, unsigned int* memory_rang
 
 		/*bin_parser(str_line);*/
 
-		
+
 		if (IF_ID.NPC == 0 && ID_EX.NPC == 0 && EX_MEM.NPC == 0 && MEM_WB.NPC == 0 && AFTER_WB.NPC == 0 && PC != 0x400000) {
 			break;
 		}
-		
+
 		//print 함수
 		if (d_exist) {
-			if(p_exist)
+			if (p_exist)
 				print_pipe(loop_count, IF_ID, ID_EX, EX_MEM, MEM_WB, AFTER_WB);
 			print_reg(&PC, reg);
 			if (memory_range[2] != 0) {
@@ -1292,7 +1298,7 @@ int run_bin(int num_instruc, int d_exist, int p_exist, unsigned int* memory_rang
 	}
 
 	if (1) {
-		if(p_exist)
+		if (p_exist)
 			print_pipe(loop_count, IF_ID, ID_EX, EX_MEM, MEM_WB, AFTER_WB);
 		print_reg(&PC, reg);
 
