@@ -1026,10 +1026,10 @@ STAGE_REG EX(STAGE_REG ID_EX)
 		result.rd = result.REG2;
 	}
 
-	if (All_taken == 0) {
+	if (All_taken == 0 && result.branch != 0) {
 		result.BR_TARGET = ID_EX.IMM * 4 + ID_EX.NPC;
 	}
-	else if (All_taken == 1) {
+	else if (All_taken == 1 && result.branch != 0) {
 		PC = result.BR_TARGET;
 		result.BR_TARGET = result.NPC;
 	}
