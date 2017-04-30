@@ -1324,8 +1324,11 @@ int run_bin(int num_instruc, int d_exist, int p_exist, unsigned int* memory_rang
 	}
 
 	if (1) {
-		if (p_exist)
+		if (p_exist) {
+			printf("Completion Cycle: %d\n", loop_count);
+			cout << endl;
 			print_pipe(loop_count, IF_ID, ID_EX, EX_MEM, MEM_WB, AFTER_WB);
+		}
 		print_reg(&PC, reg);
 
 		if (memory_range[2] != 0) {
