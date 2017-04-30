@@ -731,7 +731,6 @@ struct STAGE_REG
 	int Regdst = 0;
 	int DATA1 = 0;
 	int DATA2 = 0;
-	int stall_sign = 0;
 	int flush = 0;
 	int ALUOp = 0;
 };
