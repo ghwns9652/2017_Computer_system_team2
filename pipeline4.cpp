@@ -890,7 +890,8 @@ STAGE_REG ID(STAGE_REG IF_ID)
 
 			//Branch Always taken
 			if (All_taken == 1) {
-				result.BR_TARGET = IF_ID.NPC + result.IMM * 4;
+				result.BR_TARGET = IF_ID.NPC + result.IMM * 4 - 4;
+				PC = result.BR_TARGET;
 				result.flush = 1;
 			}
 		}
@@ -1029,10 +1030,6 @@ STAGE_REG EX(STAGE_REG ID_EX)
 	if (All_taken == 0 && result.branch != 0) {
 		result.BR_TARGET = ID_EX.IMM * 4 + ID_EX.NPC;
 	}
-	else if (All_taken == 1 && result.branch != 0) {
-		PC = result.BR_TARGET;
-		result.BR_TARGET = result.NPC;
-	}
 
 	return result;
 }
@@ -1053,13 +1050,13 @@ STAGE_REG MEM(STAGE_REG EX_MEM)
 	//BRANCH IS HERE!! YEAH!
 	if ((result.ALU_OUT == 0 && EX_MEM.branch == 1) || (result.ALU_OUT != 0 && EX_MEM.branch == 2)) {
 		if (All_taken == 0) {
-			PC = EX_MEM.BR_TARGET;
+			PC = EX_MEM.BR_TARGET - 4;
 			result.flush = 3;
 		}
 	}
 	else {
 		if (All_taken == 1 && EX_MEM.branch != 0) {
-			PC = EX_MEM.BR_TARGET;
+			PC = EX_MEM.BR_TARGET - 4;
 			result.flush = 3;
 		}
 	}
