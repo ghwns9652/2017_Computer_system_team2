@@ -973,7 +973,6 @@ STAGE_REG ID(STAGE_REG IF_ID)
 		else if (opcode == 0) {	//JR code
 			J_PC_temp = reg[31];
 			result.ALUOp = 1;
-			cout << "reg[31] : " << reg[31] << endl;
 		}
 		result.flush = 1; // flush 1 cycle sign
 	}
