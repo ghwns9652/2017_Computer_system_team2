@@ -893,7 +893,7 @@ STAGE_REG ID(STAGE_REG IF_ID)
 			//Branch Always taken
 			if (All_taken == 1) {
 				PC = IF_ID.NPC + result.IMM * 4;
-				IF_ID.flush = 1;
+				result.flush = 1;
 			}
 		}
 		else if (opcode == 0x23) { // Load word  -- read only rs and write on rt
@@ -1052,7 +1052,7 @@ STAGE_REG MEM(STAGE_REG EX_MEM)
 		}
 	}
 	else {
-		if (All_taken == 1) {
+		if (All_taken == 1 && EX_MEM.branch !=0) {
 			PC = result.NPC;
 			result.flush = 3;
 		}
