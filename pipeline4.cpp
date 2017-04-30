@@ -1062,7 +1062,6 @@ struct STAGE_REG WB(STAGE_REG MEM_WB)
 {
 	if (MEM_WB.reg_wt == 1 && MEM_WB.mem2reg == 1) {
 		reg[MEM_WB.rd] = MEM_WB.reg_data;
-		cout << MEM_WB.rd << endl;
 	}
 
 	if (MEM_WB.reg_wt == 1 && MEM_WB.mem2reg == 0) {
@@ -1265,7 +1264,6 @@ int run_bin(int num_instruc, int d_exist, unsigned int* memory_range) {
 				print_mem(mem, memory_range[0], memory_range[1]);  //print_mem(reinterpret_cast<unsigned char*>(mem), start, end);
 			}
 		}
-		cout << "!" << endl;
 		
 		
 	}
