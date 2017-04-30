@@ -755,7 +755,7 @@ void print_pipe(int cycle, STAGE_REG IF_ID, STAGE_REG ID_EX, STAGE_REG EX_MEM, S
 	cout << endl << endl;
 }
 
-void Load_Noop(STAGE_REG IF_ID, STAGE_REG ID_EX)
+int Load_Noop(STAGE_REG IF_ID, STAGE_REG ID_EX)
 {
 	// REG2 = rd인 경우와 REG3 = rd인 경우 처리 + 없는 경우
 	if ((IF_ID.opcode == 2) || (IF_ID.opcode == 3)) { // J type
@@ -773,6 +773,8 @@ void Load_Noop(STAGE_REG IF_ID, STAGE_REG ID_EX)
 		if ((ID_EX.mem_rd == 1) && (ID_EX.REG2 == IF_ID.REG1))
 			ID_EX.flush = -1;
 	}
+	
+	return ID_EX.flush;
 }
 
 int ALU_controller(int ALUOp, int funct) {	//Simulate ALU controller
@@ -1252,6 +1254,11 @@ int run_bin(int num_instruc, int d_exist, int p_exist, unsigned int* memory_rang
 			IF_ID = IF();
 			ins_count_IF = ins_count_IF + 1; // n option
 		}
+		else if (stage_state[0] == -1) {
+			PC = PC - 4;
+			IF_ID = IF();
+			ins_count_IF = ins_count_IF + 1; // n option
+		}
 		else {
 			IF_ID = STAGE_REG();
 		}
@@ -1278,7 +1285,7 @@ int run_bin(int num_instruc, int d_exist, int p_exist, unsigned int* memory_rang
 
 
 		//noop stall
-		Load_Noop(IF_ID, ID_EX); // check noop stall
+		ID_EX.flush = Load_Noop(IF_ID, ID_EX); // check noop stall
 		if (stage_state[0] == -1) {
 			ins_count_IF = ins_count_IF - 1; // n option
 
