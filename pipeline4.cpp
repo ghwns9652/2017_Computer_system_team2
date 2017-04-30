@@ -1189,7 +1189,11 @@ int run_bin(int num_instruc, int d_exist, int p_exist, unsigned int* memory_rang
 		//END_warn = 0;
 		PC += 4;
 		}*/
-
+		
+		// n option 
+		if (ins_count >= num_instruc && num_instruc != -1) {
+			break;
+		}
 
 		// 각 스테이지를 컨트롤 해서 실행
 		stage_control();
@@ -1283,10 +1287,6 @@ int run_bin(int num_instruc, int d_exist, int p_exist, unsigned int* memory_rang
 		}
 
 		if (IF_ID.NPC == 0 && ID_EX.NPC == 0 && EX_MEM.NPC == 0 && MEM_WB.NPC == 0 && AFTER_WB.NPC == 0 && PC != 0x400000) {
-			break;
-		}
-		
-		if (ins_count >= num_instruc && num_instruc != -1) {
 			break;
 		}
 	}
