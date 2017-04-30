@@ -1074,31 +1074,31 @@ struct STAGE_REG WB(STAGE_REG MEM_WB)
 struct STAGE_REG Forward_Unit_to_EX(STAGE_REG ID_EX, STAGE_REG EX_MEM, STAGE_REG MEM_WB)
 {
 	//EX_MEM to EX
-	if (EX_MEM.reg_wt && (EX_MEM.rd != 0) && (EX_MEM.rd == ID_EX.REG1))
+	if (EX_MEM.reg_wt && (EX_MEM.rd != 0) && (EX_MEM.rd == ID_EX.REG1)) // ALU 연산결과 포워딩
 		ID_EX.DATA1 = EX_MEM.ALU_OUT;
-	if (EX_MEM.reg_wt && (EX_MEM.rd != 0) && (EX_MEM.rd == ID_EX.REG2))
+
+	if (EX_MEM.reg_wt && (EX_MEM.rd != 0) && (EX_MEM.rd == ID_EX.REG2)) // ALU 연산결과 포워딩
 		ID_EX.DATA2 = EX_MEM.ALU_OUT;
 
 	//MEM_WB to EX
-	if (MEM_WB.reg_wt && (MEM_WB.rd != 0) && (EX_MEM.rd != ID_EX.REG1) && (MEM_WB.rd == ID_EX.REG1))
-		ID_EX.DATA1 = MEM_WB.ALU_OUT;
-	if (MEM_WB.reg_wt && (MEM_WB.rd != 0) && (EX_MEM.rd != ID_EX.REG2) && (MEM_WB.rd == ID_EX.REG2))
-		ID_EX.DATA2 = MEM_WB.ALU_OUT;
-
-	//MEM_WB to EX - load
-	if (MEM_WB.reg_wt && (MEM_WB.rd != 0) && (EX_MEM.rd != ID_EX.REG1) && (MEM_WB.rd == ID_EX.REG1))
+	if (MEM_WB.reg_wt && MEM_WB.mem_rd &&(MEM_WB.rd != 0) && (MEM_WB.rd == ID_EX.REG1)) // load의 경우 읽은 메모리값 포워딩
 		ID_EX.DATA1 = MEM_WB.reg_data;
-	if (MEM_WB.reg_wt && (MEM_WB.rd != 0) && (EX_MEM.rd != ID_EX.REG2) && (MEM_WB.rd == ID_EX.REG2))
+	else if (MEM_WB.reg_wt && (MEM_WB.rd != 0) && (EX_MEM.rd != ID_EX.REG1) && (MEM_WB.rd == ID_EX.REG1)) // ALU 연산결과 포워딩
+		ID_EX.DATA1 = MEM_WB.ALU_OUT;
+
+	if (MEM_WB.reg_wt && MEM_WB.mem_rd && (MEM_WB.rd != 0) && (MEM_WB.rd == ID_EX.REG2)) // load의 경우 읽은 메모리값 포워딩
 		ID_EX.DATA2 = MEM_WB.reg_data;
+	else if (MEM_WB.reg_wt && (MEM_WB.rd != 0) && (EX_MEM.rd != ID_EX.REG2) && (MEM_WB.rd == ID_EX.REG2)) // ALU 연산결과 포워딩
+		ID_EX.DATA2 = MEM_WB.ALU_OUT;
 
 	return ID_EX;
 }
 
 struct STAGE_REG Forward_Unit_to_MEM(STAGE_REG EX_MEM, STAGE_REG MEM_WB)
 {
-	//MEM_WB to MEM
+	//MEM_WB to MEM --- load 다음 store 인 경우
 	if (MEM_WB.reg_wt && (MEM_WB.rd != 0) && (MEM_WB.rd == EX_MEM.REG2))
-		EX_MEM.DATA2 = MEM_WB.ALU_OUT;
+		EX_MEM.DATA2 = MEM_WB.reg_data;
 
 	return EX_MEM;
 }
