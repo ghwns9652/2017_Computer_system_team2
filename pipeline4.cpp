@@ -282,7 +282,7 @@ void print_reg(unsigned int *PC, int *registers)
 	int i;
 
 	printf("Current register values :\n");
-	printf("-----------------------------------------\n");
+	printf("-------------------------------------\n");
 	printf("PC: 0x%.8X\n", *PC);
 
 	printf("Registers:\n");
@@ -756,7 +756,7 @@ void print_pipe(int cycle, STAGE_REG IF_ID, STAGE_REG ID_EX, STAGE_REG EX_MEM, S
 			printf("|");
 	}
 	//printf("0x%08x|0x%08x|0x%08x|0x%08x|0x%08x", pipe_PCs[0], pipe_PCs[1], pipe_PCs[2], pipe_PCs[3], pipe_PCs[4] - 4);
-	cout << endl;
+	cout << endl << endl;
 }
 
 void Load_Noop(STAGE_REG IF_ID, STAGE_REG ID_EX)
