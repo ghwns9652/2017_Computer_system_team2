@@ -882,9 +882,10 @@ STAGE_REG ID(STAGE_REG IF_ID)
 			result.mem_rd = 0;
 			result.mem_wt = 0;
 			result.mem2reg = 0;
-			result.branch = 1;
+			result.branch = opcode - 3;
 			result.ALUSrc = 0;
 			result.ALUOp = 1;
+			
 
 
 			//Branch Always taken
