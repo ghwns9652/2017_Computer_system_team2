@@ -732,6 +732,19 @@ struct STAGE_REG
 	int flush = 0;
 };
 
+STAGE_REG EX_fix(STAGE_REG EX_MEM) {
+	EX_MEM.instr = "00000000000000000000000000000000";
+	EX_MEM.opcode = 0;
+	EX_MEM.shift = 0;
+	EX_MEM.funct = 0;
+	EX_MEM.IMM = 0;
+	EX_MEM.ALUOp = 0;
+	//control
+	EX_MEM.ALUSrc = 0;
+	EX_MEM.Regdst = 0;
+	return EX_MEM;
+}
+
 void print_pipe(int cycle, STAGE_REG IF_ID, STAGE_REG ID_EX, STAGE_REG EX_MEM, STAGE_REG MEM_WB, STAGE_REG AFTER_WB)
 {
 	int pipe_PCs[5];
@@ -1030,6 +1043,8 @@ STAGE_REG EX(STAGE_REG ID_EX)
 	if (All_taken == 0 && result.branch != 0) {
 		result.BR_TARGET = ID_EX.IMM * 4 + ID_EX.NPC;
 	}
+	
+	result = EX_fix(result);
 
 	return result;
 }
